@@ -13,8 +13,8 @@ output:
 
 knitr::opts_chunk$set(echo=F, warning=FALSE, message=FALSE)
 
-
-pacman::p_load(tidyverse, magrittr, stringr, scales, lubridate, tidytext, tidyr, ggthemes, janitor, Rfacebook)
+#pacman::p_install_gh("vosonlab/SocialMediaLab")
+pacman::p_load(tidyverse, magrittr, stringr, scales, lubridate, tidytext, tidyr, ggthemes, janitor, Rfacebook, SocialMediaLab, highcharter)
 ```
 
 
@@ -102,7 +102,7 @@ weekly <- cntry_daily_reach %>%
 cntry_weekly_reach <- cntry_daily_reach %>% 
   mutate(wks = lubridate::week(date)) %>% 
   group_by(wks, cntry) %>% 
-  summarise(reach = mean(reach, na.rm = T)) %>% 
+  summarise(reach = sum(reach, na.rm = T)) %>% 
   mutate(reach = ifelse(is.nan(reach), NA, reach)) %>% 
   left_join(weekly, by = "wks") %>% 
   mutate(
@@ -119,14 +119,17 @@ data(worldgeojson, package = "highcharter")
 
 
 stops <- data.frame(
-  q = 0:5/5,
+  q = 0:8/8,
   #c = viridis::viridis(6, option = "A"),
-  c = c("#edf8fb",
-"#ccece6",
-"#99d8c9",
-"#66c2a4",
-"#2ca25f",
-"#006d2c"),
+  c = c("#f7fcf5",
+"#e5f5e0",
+"#c7e9c0",
+"#a1d99b",
+    "#74c476",
+    "#41ab5d",
+"#238b45",
+"#006d2c",
+"#00441b"),
   stringsAsFactors = FALSE
 ) %>% highcharter::list_parse2()
 
@@ -148,3 +151,293 @@ cntry_weekly_reach %>%
   ) %>% 
   highcharter::hc_subtitle(text = "Based on Data from Omar Saif Ghobash's Facebook page (October 9th 2017 - January 7th 2018)") %>% highcharter::hc_add_theme(highcharter::hc_theme_smpl())
 ```
+
+## Without animation
+
+```{r}
+hc_world_map <- function(data, iso3 = "iso3", value = "perc", label = ""){
+  ds <- data[,c(iso3, value)]
+  colnames(ds) <- c("iso3", "value")
+
+
+  high_map <- highcharter::highchart(type = "map") %>% 
+    highcharter::hc_add_series(
+      data = ds,
+      name = label,
+      mapData = worldgeojson,
+      joinBy = "iso3",
+      borderWidth = 0.01
+    ) 
+    #highcharter::hc_colorAxis(stops = highcharter::color_stops()) %>%  
+    #highcharter::hc_colorAxis(stops = stops) %>%
+    #  highcharter::hc_legend(layout = "vertical", reversed = TRUE,
+    #            floating = TRUE, align = "right") %>% 
+   
+  
+  return(high_map)
+}
+```
+
+```{r}
+
+stops <- data.frame(
+  q = 0:7/7,
+  #c = viridis::viridis(6, option = "A"),
+  c = c(#"#f7fcf5",
+"#e5f5e0",
+"#c7e9c0",
+"#a1d99b",
+    "#74c476",
+    "#41ab5d",
+"#238b45",
+"#006d2c",
+"#00441b"),
+  stringsAsFactors = FALSE
+) %>% highcharter::list_parse2()
+
+cntry_weekly_reach %>% 
+  select(iso3, reach) %>% 
+  group_by(iso3) %>% 
+  summarize(reach = sum(reach, na.rm = T)) %>% 
+  hc_world_map(
+    iso3 = "iso3", 
+    value = "reach"
+  ) %>%
+  highcharter::hc_colorAxis(stops = stops) %>%
+  highcharter::hc_title(
+    text = "Total Page Reach (October 9th 2017 - January 7th 2018)"
+  ) %>% 
+  highcharter::hc_subtitle(text = "Based on Data from Omar Saif Ghobash's Facebook page. \t By user country in unique users (Total = 264.755)") %>%
+#  highcharter::hc_credits(enabled = TRUE, text = "Based on Data from Omar Saif Ghobash's Facebook page") %>% 
+  highcharter::hc_add_theme(highcharter::hc_theme_smpl()) %>% 
+  highcharter::hc_mapNavigation(enabled = TRUE)
+
+cntry_weekly_reach %>% select(reach) %>% sum
+```
+
+
+## Country Likes V!
+
+```{r}
+
+cntry_likes <- readr::read_csv("data/cntry_likes.csv") %>% janitor::clean_names()
+
+dscrs4 <- as.list(cntry_likes[1,])
+
+cntry_likes %<>% filter(!is.na(date)) 
+
+cntry <- colnames(cntry_likes)[-1] %>% str_extract("..$") %>% 
+  countrycode::countrycode("iso2c", "country.name") 
+
+#cntry[134] <- "Kosovo"
+
+cntry <- c("date", cntry)
+
+colnames(cntry_likes) <- cntry
+
+cntry_likes %<>% 
+  gather("cntry", "likes", -date) %>% 
+  mutate(likes = as.numeric(likes)) %>% 
+  mutate(iso3 = countrycode::countrycode(cntry, "country.name", "iso3c"))
+
+cntry_likes %>% 
+  select(iso3, likes) %>% 
+  group_by(iso3) %>% 
+  summarize(likes = sum(likes, na.rm = T)) %>% 
+  hc_world_map(
+    iso3 = "iso3", 
+    value = "likes"
+  ) %>%
+  highcharter::hc_colorAxis(stops = stops) %>%
+  highcharter::hc_title(
+    text = "Total Page Reach (October 9th 2017 - January 7th 2018)"
+  ) %>% 
+  highcharter::hc_subtitle(text = "Based on Data from Omar Saif Ghobash's Facebook page. \t By user country in unique users (Total = 264.755)") %>%
+#  highcharter::hc_credits(enabled = TRUE, text = "Based on Data from Omar Saif Ghobash's Facebook page") %>% 
+  highcharter::hc_add_theme(highcharter::hc_theme_smpl()) %>% 
+  highcharter::hc_mapNavigation(enabled = TRUE)
+
+```
+
+## Country Likes V!
+
+```{r}
+cntry_likes <- readr::read_csv("data/cntry_likes.csv") %>% janitor::clean_names()
+
+total_follows <- readr::read_csv("data/total_follows.csv") %>% janitor::clean_names()
+
+
+dscrs4 <- as.list(cntry_likes[1,])
+
+cntry_likes %<>% filter(!is.na(date)) 
+
+total_follows %<>% filter(!is.na(date)) 
+
+
+totalikes <- cntry_likes %>% 
+  select(-date) %>% 
+  mutate_all(funs(as.numeric)) %>% 
+  rowSums(., na.rm = T) %>% 
+  cbind(cntry_likes %>% select(date), .)
+
+colnames(totalikes) <- c("date", "likes")
+
+
+total_follows <- total_follows %>% 
+  select(-date) %>% 
+  mutate_all(funs(as.numeric)) %>% 
+  rowSums(., na.rm = T) %>% 
+  cbind(total_follows %>% select(date), .)
+
+colnames(total_follows) <- c("date", "follows")
+
+hc_dat <- total_follows %>% 
+  left_join(totalikes, by = "date")
+
+highchart() %>% 
+  hc_xAxis(categories = hc_dat$date) %>% 
+  hc_add_series(name = "Follows", data = hc_dat$follows, type = "area") %>% 
+  hc_add_series(name = "Likes", data = hc_dat$likes, type = "area") %>% 
+  hc_add_theme(hc_theme_smpl())
+  
+
+
+```
+
+# pages
+
+```{r}
+pages <- readr::read_csv("data/pages.csv") %>% janitor::clean_names()
+
+dscrs2 <- as.list(pages[1,])
+
+pages %<>% filter(!is.na(date)) %>% 
+  select(-date) %>% 
+  mutate_all(funs(as.numeric)) %>% 
+  cbind(pages %>% filter(!is.na(date)) %>% select(date), .)
+
+
+
+
+
+highchart() %>% 
+  hc_xAxis(categories = pages$date) %>% 
+  hc_add_series(name = "daily_page_stories", data = pages$daily_page_stories) %>% 
+  hc_add_series(name = "daily_page_consumptions", data = pages$daily_page_consumptions) %>% 
+  hc_add_series(name = "daily_post_engagements", data = pages$daily_post_engagements) %>% 
+  hc_add_series(name = "daily_page_engaged_users", data = pages$daily_page_engaged_users) %>% 
+  hc_add_series(name = "daily_new_likes", data = pages$daily_new_likes) %>%
+  hc_add_series(name = "daily_new_follows", data = pages$daily_new_follows) %>%
+  hc_add_series(name = "daily_total_video_views", data = pages$daily_total_video_views) %>%
+  hc_add_theme(hc_theme_smpl())
+  
+```
+
+## Timeseries
+
+```{r}
+library(xts)
+
+
+    
+make_xts <- function(variables, date) {
+  as.ts(xts(x=variables, order.by = date))
+}
+
+
+x <- cbind(make_xts(pages$daily_total_impressions, pages$date), 
+           make_xts(pages$daily_total_reach, pages$date), 
+           make_xts(pages$daily_total_consumers, pages$date), 
+           make_xts(pages$daily_total_video_views, pages$date))
+
+hchart(as.ts(x)) %>%
+  hc_add_theme(hc_theme_smpl())
+
+
+
+    #sent_total <- xts(x=x$sent_pool, order.by = x$time)
+    
+    library(highcharter)
+    highchart(type = "stock")  %>%
+      #hc_add_series(sent_total, color = "blue") %>% 
+      #hc_credits(enabled = TRUE) %>%
+      #hc_exporting(enabled = TRUE) 
+      hc_add_series(
+      make_xts(pages$daily_page_stories, pages$date), type = "area", color = "red"
+      ) %>% 
+      hc_add_series(
+      make_xts(pages$daily_page_consumptions, pages$date), type = "area", color = "green"
+      )  
+      #hc_exporting(enabled = T) %>%
+    
+    
+    
+cumsum(pages$daily_page_stories)
+
+if_else_replace <- function(variables) {
+  ifelse(is.na(variables), 0, variables)
+}
+
+pages %<>% 
+  mutate_if(.predicate = is.numeric, if_else_replace) %>% 
+  mutate_if(.predicate = is.numeric, cumsum)
+
+x <- cbind(make_xts(pages$daily_total_impressions, pages$date), 
+           make_xts(pages$daily_total_reach, pages$date), 
+           make_xts(pages$daily_total_consumers, pages$date), 
+           make_xts(pages$daily_total_video_views, pages$date))
+
+hchart(as.ts(x)) %>%
+  hc_add_theme(hc_theme_smpl())
+
+```
+
+## gender und age
+
+```{r}
+
+agender_likes <- readr::read_csv("data/agender_likes.csv") %>% janitor::clean_names()
+
+agenders <- colnames(agender_likes)[-1] %>% str_extract(".......$") 
+
+agenders[7] <- "f_f_65"
+agenders[14] <- "m_m_65"
+agenders[20] <- "u_u_65"
+
+colnames(agender_likes) <- c("date", agenders)
+
+agender_likes %<>% 
+  filter(!is.na(date)) %>% 
+  select(-u_13_17, -u_25_34, -u_35_44, -u_45_54, -u_55_64, -u_u_65) %>% 
+  gather("agender", "likes", -date) 
+
+genders <- agender_likes$agender %>% str_split("_") %>% 
+  as.data.frame %>% janitor::clean_names()
+
+agender_likes$gender <- as.character(as_vector(genders[1,]))
+agender_likes$age <- paste0(as.character(as_vector(genders[2,])), "-", as.character(as_vector(genders[3,])))
+
+
+
+table(agender_likes$age)
+
+
+library(ggplot2)
+agender_likes %>%
+  mutate(age = case_when(
+    age == "f-65" ~ "65+",
+    age == "m-65" ~ "65+",
+    TRUE ~ as.character(age)
+  )) %>% 
+  mutate(likes = as.numeric(likes)) %>% 
+  mutate(likes = ifelse(gender == "f", -likes, likes)) %>% 
+ggplot(aes(x=age, y=likes, fill=gender)) + 
+  geom_bar(stat="identity", position="identity", aes(x=age, y=likes, fill=gender)) + 
+  geom_bar(stat="identity", position="identity") + 
+  ggthemes::theme_hc() +
+  ggthemes::scale_fill_hc()
+  plotly::ggplotly()
+
+
+```
+
