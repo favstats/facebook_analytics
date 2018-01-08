@@ -1,0 +1,150 @@
+---
+title: "Weekly: Total Page Reach by user country. (Unique Users)"
+date: "`r Sys.Date()`"
+output:
+  prettydoc::html_pretty:
+    theme: architect
+    highlight: github
+---
+
+
+
+```{r, echo = F}
+
+knitr::opts_chunk$set(echo=F, warning=FALSE, message=FALSE)
+
+
+pacman::p_load(tidyverse, magrittr, stringr, scales, lubridate, tidytext, tidyr, ggthemes, janitor, Rfacebook)
+```
+
+
+
+```{r}
+hc_world_map_motion <- function(data, year = "year", iso3 = "iso3", value = "perc", label = ""){
+  ds <- data[,c(year, iso3, value)]
+  colnames(ds) <- c("year", "iso3", "value")
+  ds <- ds %>%
+    #mutate(id = 1:n()) %>%
+    #mutate(perc = ifelse(perc < 0.01 & perc > -0.01, 0, perc)) %>%
+    group_by(iso3) %>% 
+    #split(.$id) # from base R
+    do(item = list(
+      iso3 = first(.$iso3),
+      sequence = .$value,
+      value = first(.$value))
+    ) %>% 
+    .$item
+  #ds[[4]]
+
+  high_map <- highcharter::highchart(type = "map") %>% 
+    highcharter::hc_add_series(
+      data = ds,
+      name = label,
+      mapData = worldgeojson,
+      joinBy = "iso3",
+      borderWidth = 0.01
+    ) %>% 
+    #highcharter::hc_colorAxis(stops = highcharter::color_stops()) %>%  
+    #highcharter::hc_colorAxis(stops = stops) %>%
+    #  highcharter::hc_legend(layout = "vertical", reversed = TRUE,
+    #            floating = TRUE, align = "right") %>% 
+    highcharter::hc_add_theme(highcharter::hc_theme_smpl()) %>% 
+    highcharter::hc_motion(
+      enabled = T,
+      axisLabel = "year",
+      labels = sort(unique(data$year)),
+      series = 0,
+      updateIterval = 50,
+      magnet = list(
+        round = "floor",
+        step = 0.01
+      )
+    ) 
+  
+  return(high_map)
+}
+```
+
+```{r}
+cntry_daily_reach <- readr::read_csv("data/cntry_daily_reach.csv") %>% janitor::clean_names()
+
+dscrs3 <- as.list(cntry_daily_reach[1,])
+
+cntry_daily_reach %<>% filter(!is.na(date)) 
+
+cntry <- colnames(cntry_daily_reach)[-1] %>% str_extract("..$") %>% 
+  countrycode::countrycode("iso2c", "country.name") 
+
+cntry[134] <- "Kosovo"
+
+cntry <- c("date", cntry)
+
+colnames(cntry_daily_reach) <- cntry
+
+cntry_daily_reach %<>% 
+  gather("cntry", "reach", -date) %>% 
+  mutate(reach = as.numeric(reach))
+
+
+```
+
+
+
+```{r}
+
+weekly <- cntry_daily_reach %>% 
+  mutate(wks = lubridate::week(date)) %>% 
+  group_by(wks) %>% 
+  arrange(date) %>% 
+  slice(1) %>% 
+  select(date, wks)
+
+cntry_weekly_reach <- cntry_daily_reach %>% 
+  mutate(wks = lubridate::week(date)) %>% 
+  group_by(wks, cntry) %>% 
+  summarise(reach = mean(reach, na.rm = T)) %>% 
+  mutate(reach = ifelse(is.nan(reach), NA, reach)) %>% 
+  left_join(weekly, by = "wks") %>% 
+  mutate(
+    iso3 = countrycode::countrycode(
+      cntry, 
+      origin = "country.name", 
+      destination = "iso3c"))
+
+
+
+data(worldgeojson, package = "highcharter")
+
+  range01 <- function(x){(x - min(x, na.rm = T)) / (max(x, na.rm = T) - min(x, na.rm = T))}
+
+
+stops <- data.frame(
+  q = 0:5/5,
+  #c = viridis::viridis(6, option = "A"),
+  c = c("#edf8fb",
+"#ccece6",
+"#99d8c9",
+"#66c2a4",
+"#2ca25f",
+"#006d2c"),
+  stringsAsFactors = FALSE
+) %>% highcharter::list_parse2()
+
+
+
+cntry_weekly_reach %>% 
+  mutate(year = lubridate::as_date(date)) %>% 
+#  mutate(reach = ifelse(is.na(reach), 0, reach)) %>% 
+  mutate(reach = as.numeric(reach)) %>% 
+  arrange(date) %>% 
+  hc_world_map_motion(
+    year = "year", 
+    iso3 = "iso3", 
+    value = "reach"
+  ) %>%
+  highcharter::hc_colorAxis(stops = stops) %>%
+  highcharter::hc_title(
+    text = "Weekly: Total Page Reach by user country. (Unique Users)"
+  ) %>% 
+  highcharter::hc_subtitle(text = "Based on Data from Omar Saif Ghobash's Facebook page (October 9th 2017 - January 7th 2018)") %>% highcharter::hc_add_theme(highcharter::hc_theme_smpl())
+```

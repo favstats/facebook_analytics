@@ -1,0 +1,278 @@
+---
+title: "Facebook Analytics"
+output: html_notebook
+---
+
+
+```{r}
+pacman::p_load(tidyverse, magrittr, stringr, scales, lubridate, tidytext, tidyr, ggthemes, janitor, Rfacebook)
+```
+
+
+# token generated here: https://developers.facebook.com/tools/explorer 
+```{r}
+devtools::install_github("pablobarbera/Rfacebook/Rfacebook") # from GitHub
+library(Rfacebook)
+my_key <- "EAACEdEose0cBAGOWs2BSo7wVoCUv4q0m7BZC4KHUy9guJiehYATjd8Qjb6NtrAZAAmp0AQMirT24QBUlg01aEeGY4e7H9i9Ku79g8yikENNLiiYHiOLtl9aUeyd2SZBNxZBGquWNqFYztdhNNdRDfc6OSXS7ISW8KUKmE28hPZAR6Suu1ZBFXk9esBaKSYOeApIXA0zjDuewZDZD"
+me <- getUsers("me", my_key, private_info=TRUE)
+me
+```
+
+# Target Page https://www.facebook.com/OmarSGhobash/
+
+```{r}
+page <- getPage("OmarSGhobash", my_key, n = 5000)
+
+
+
+format.facebook.date <- function(datestring) {
+    date <- as.POSIXct(datestring, format = "%Y-%m-%dT%H:%M:%S+0000", tz = "GMT")
+}
+## aggregate metric counts over month
+aggregate.metric <- function(metric) {
+    m <- aggregate(page[[paste0(metric, "_count")]], list(month = page$month), 
+        mean)
+    m$month <- as.Date(paste0(m$month, "-15"))
+    m$metric <- metric
+    return(m)
+}
+# create data frame with average metric counts per month
+page$datetime <- format.facebook.date(page$created_time)
+page$month <- format(page$datetime, "%Y-%m")
+df.list <- lapply(c("likes", "comments", "shares"), aggregate.metric)
+df <- do.call(rbind, df.list)
+# visualize evolution in metric
+library(ggplot2)
+library(scales)
+ggplot(df, aes(x = month, y = x, group = metric)) + geom_line(aes(color = metric)) + 
+    scale_x_date(date_breaks = "month", labels = date_format("%m-%Y")) + scale_y_continuous("Average count per post", 
+    breaks = c(10, 100, 1000, 10000, 50000)) + ggthemes::theme_fivethirtyeight() + theme(axis.title.x = element_blank())
+```
+
+```{r}
+page %>% 
+knitr::kable()
+
+getInsights(object_id = "227071407345158", token = "EAACEdEose0cBAL1M2XVBOFf6xAOCjU7h1s9NYWlwqLZAlo9sdE7FbBZCwYaWWULlCgJI9kaZBZA228AnePUPzcj9SqngUo8BmwiXPs0GTSI4gHzM8LvWhR2gtakB1w2pBU6nO5fVagJcgj5V3O8EKfdP8TCKHfyPbMAlQI4FVcNxeJlR0n6I5spipIocZAoUZD", metric = "page_fans") 
+
+min(page$month)
+```
+
+```{r}
+fb <- readr::read_csv("data/posts.csv")
+
+dscrs1 <- as.list(fb[1,])
+
+fb %<>% filter(!is.na(Permalink)) 
+
+fb %>% 
+  janitor::clean_names() %>% 
+  mutate(post_total = nrow(fb)) %>% 
+  mutate(post_stories = sum(as.numeric(lifetime_post_stories))) %>% 
+  mutate(post_userstories = sum(as.numeric(lifetime_talking_about_this_post)))
+
+
+
+```
+
+# pages
+## daily views likes and so on
+
+```{r}
+
+pages <- readr::read_csv("data/pages.csv") %>% janitor::clean_names()
+
+dscrs2 <- as.list(pages[1,])
+
+pages %<>% filter(!is.na(date)) 
+
+pages %>% 
+  select(-date) %>% 
+  mutate_all(funs(as.numeric)) %>% 
+  summarise_all(funs(sum(., na.rm = T))) %>% 
+  gather() %>% 
+  knitr::kable()
+```
+
+## Daily Reach by Country
+
+```{r}
+cntry_daily_reach <- readr::read_csv("data/cntry_daily_reach.csv") %>% janitor::clean_names()
+
+dscrs3 <- as.list(cntry_daily_reach[1,])
+
+cntry_daily_reach %<>% filter(!is.na(date)) 
+
+cntry <- colnames(cntry_daily_reach)[-1] %>% str_extract("..$") %>% 
+  countrycode::countrycode("iso2c", "country.name") 
+
+cntry[134] <- "Kosovo"
+
+cntry <- c("date", cntry)
+
+colnames(cntry_daily_reach) <- cntry
+
+cntry_daily_reach %<>% 
+  gather("cntry", "reach", -date) %>% 
+  mutate(reach = as.numeric(reach))
+
+pages %>% 
+  select(-date) %>% 
+  mutate_all(funs(as.numeric)) %>% 
+  summarise_all(funs(sum(., na.rm = T))) %>% 
+  gather() %>% 
+  knitr::kable()
+```
+
+# highcharter
+
+```{r}
+hc_world_map_motion <- function(data, year = "year", iso3 = "iso3", value = "perc", label = ""){
+  ds <- data[,c(year, iso3, value)]
+  colnames(ds) <- c("year", "iso3", "value")
+  ds <- ds %>%
+    #mutate(id = 1:n()) %>%
+    #mutate(perc = ifelse(perc < 0.01 & perc > -0.01, 0, perc)) %>%
+    group_by(iso3) %>% 
+    #split(.$id) # from base R
+    do(item = list(
+      iso3 = first(.$iso3),
+      sequence = .$value,
+      value = first(.$value))
+    ) %>% 
+    .$item
+  #ds[[4]]
+
+  high_map <- highcharter::highchart(type = "map") %>% 
+    highcharter::hc_add_series(
+      data = ds,
+      name = label,
+      mapData = worldgeojson,
+      joinBy = "iso3",
+      borderWidth = 0.01
+    ) %>% 
+    #highcharter::hc_colorAxis(stops = highcharter::color_stops()) %>%  
+    #highcharter::hc_colorAxis(stops = stops) %>%
+    #  highcharter::hc_legend(layout = "vertical", reversed = TRUE,
+    #            floating = TRUE, align = "right") %>% 
+    highcharter::hc_add_theme(highcharter::hc_theme_smpl()) %>% 
+    highcharter::hc_motion(
+      enabled = T,
+      axisLabel = "year",
+      labels = sort(unique(data$year)),
+      series = 0,
+      updateIterval = 50,
+      magnet = list(
+        round = "floor",
+        step = 0.01
+      )
+    ) 
+  
+  return(high_map)
+}
+```
+
+```{r}
+data(worldgeojson, package = "highcharter")
+
+  range01 <- function(x){(x - min(x, na.rm = T)) / (max(x, na.rm = T) - min(x, na.rm = T))}
+
+
+stops <- data.frame(
+  q = 0:5/5,
+  #c = viridis::viridis(6, option = "A"),
+  c = c("#edf8fb",
+"#ccece6",
+"#99d8c9",
+"#66c2a4",
+"#2ca25f",
+"#006d2c"),
+  stringsAsFactors = FALSE
+) %>% highcharter::list_parse2()
+
+
+
+
+cntry_daily_reach %>% 
+  mutate(
+    iso3 = countrycode::countrycode(
+      cntry, 
+      origin = "country.name", 
+      destination = "iso3c")) %>% 
+  mutate(year = lubridate::as_date(date)) %>% 
+#  mutate(reach = ifelse(is.na(reach), 0, reach)) %>% 
+  arrange(date) %>% 
+  hc_world_map_motion(
+    year = "year", 
+    iso3 = "iso3", 
+    value = "reach"
+  ) %>%
+  highcharter::hc_colorAxis(stops = stops) %>%
+  highcharter::hc_title(
+    text = "Government Violence by state and year"
+  ) #%>% 
+  #highcharter::hc_colors(colors = "blue")
+```
+
+## weekly reach
+
+```{r}
+
+weekly <- cntry_daily_reach %>% 
+  mutate(wks = lubridate::week(date)) %>% 
+  group_by(wks) %>% 
+  arrange(date) %>% 
+  slice(1) %>% 
+  select(date, wks)
+
+cntry_weekly_reach <- cntry_daily_reach %>% 
+  mutate(wks = lubridate::week(date)) %>% 
+  group_by(wks, cntry) %>% 
+  summarise(reach = mean(reach, na.rm = T)) %>% 
+  mutate(reach = ifelse(is.nan(reach), NA, reach)) %>% 
+  left_join(weekly, by = "wks") %>% 
+  mutate(
+    iso3 = countrycode::countrycode(
+      cntry, 
+      origin = "country.name", 
+      destination = "iso3c"))
+
+
+
+data(worldgeojson, package = "highcharter")
+
+  range01 <- function(x){(x - min(x, na.rm = T)) / (max(x, na.rm = T) - min(x, na.rm = T))}
+
+
+stops <- data.frame(
+  q = 0:5/5,
+  #c = viridis::viridis(6, option = "A"),
+  c = c("#edf8fb",
+"#ccece6",
+"#99d8c9",
+"#66c2a4",
+"#2ca25f",
+"#006d2c"),
+  stringsAsFactors = FALSE
+) %>% highcharter::list_parse2()
+
+
+
+cntry_weekly_reach %>% 
+  mutate(year = lubridate::as_date(date)) %>% 
+#  mutate(reach = ifelse(is.na(reach), 0, reach)) %>% 
+  mutate(reach = as.numeric(reach)) %>% 
+  arrange(date) %>% 
+  hc_world_map_motion(
+    year = "year", 
+    iso3 = "iso3", 
+    value = "reach"
+  ) %>%
+  highcharter::hc_colorAxis(stops = stops) %>%
+  highcharter::hc_title(
+    text = "Weekly: Total Page Reach by user country. (Unique Users)"
+  ) %>% 
+  highcharter::hc_subtitle(text = "Based on Data from Omar Saif Ghobash's Facebook page (October 9th 2017 - January 7th 2018)")#%>% 
+  #highcharter::hc_colors(colors = "blue")
+```
+
