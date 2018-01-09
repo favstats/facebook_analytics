@@ -323,114 +323,81 @@ pos <- c(2, 23, 66) + 5
 
 #plotly::ggplotly(width = 500, height = 200)
   
-# ax <- list(
-#   title = "",
-#   zeroline = FALSE,
-#   showline = FALSE,
-#   showticklabels = FALSE,
-#   showgrid = FALSE
-# )
+ ax <- list(
+   title = "",
+   zeroline = FALSE,
+   showline = FALSE,
+   showticklabels = FALSE,
+   showgrid = FALSE
+ )
+ 
+ m <- list(
+   l = 10,
+   r = 10,
+   b = 20,
+   t = 30,
+   pad = 0
+ )
+ 
+ plotly::plot_ly(plot_dat, 
+                 x = ~perc, 
+                 y = ~1, 
+                 orientation = 'h', 
+                 type = 'bar',
+                 color = ~Measure,
+                 text = ~perc, 
+                 hoverinfo = 'text') %>% 
+ plotly::layout(legend = 
+                  list(orientation = 'v'),
+                title = "Percentage (%)",
+                xaxis = 
+                  list(title = ''),
+                yaxis = ax,
+                barmode = "stack", 
+                autosize = F, width = 600, height = 130, margin = m) 
+
+# prc_chart <- post_stats %>% 
+#   select(lifetime_post_total_impressions, 
+#          lifetime_post_paid_impressions, 
+#          lifetime_post_organic_impressions, 
+#          lifetime_post_viral_impressions) %>% 
+#   mutate_all(as.numeric) %>% 
+#   mutate_all(sum) %>% 
+#   mutate(lifetime_post_paid_impressions = round(100*lifetime_post_paid_impressions/
+#                                                   lifetime_post_total_impressions,2)) %>% 
+#   mutate(lifetime_post_organic_impressions = round(100*lifetime_post_organic_impressions/
+#                                                      lifetime_post_total_impressions,2)) %>% 
+#   mutate(lifetime_post_viral_impressions = round(100*lifetime_post_viral_impressions/
+#                                                    lifetime_post_total_impressions,2)) %>% 
+#   select(-lifetime_post_total_impressions)
 # 
-# m <- list(
-#   l = 10,
-#   r = 10,
-#   b = 20,
-#   t = 30,
-#   pad = 0
-# )
 # 
-# plotly::plot_ly(plot_dat, 
-#                 x = ~perc, 
-#                 y = ~1, 
-#                 orientation = 'h', 
-#                 type = 'bar',
-#                 color = ~Measure,
-#                 text = ~perc, 
-#                 hoverinfo = 'text') %>% 
-# plotly::layout(legend = 
-#                  list(orientation = 'v'),
-#                title = "Percentage (%)",
-#                xaxis = 
-#                  list(title = ''),
-#                yaxis = ax,
-#                barmode = "stack", 
-#                autosize = F, width = 600, height = 130, margin = m) 
+# colnames(prc_chart) <- c("Daily Paid Impressions", "Daily Organic Impressions", "Daily Viral # Impressions")
 # 
-# sample_data <- data.frame(
-#   "Countries" = c(
-#     "United Kingdom","France","Saudi # Arabia","Egypt","Germany","China","Slovakia","Canada","Estonia","Ireland"
-#   ),
-#   "Business" =  c(8, 6, 7, 8, 9, 7, 9, 7, 9, 9),
-#   "Overlay" = c(22, 28, 11, 19, 11, 39, 22, 10, 30, 7),
-#   "Personal" = c(19, 21, 21, 20, 19, 19, 21, 21, 20, 20),
-#   "Teleconference" = c(9, 29, 21, 44, 59, 11, 53, 16, 49, 36),
-#   "Unclassified" = c(42, 48, 50, 45, 49, 40, 42, 47, 48, 44),
-#   stringsAsFactors = F
-# )
+# prc_chart %<>% 
+#   .[1,] 
 # 
-# categories_column <- "Countries"
-# measure_columns <- c("Business","Overlay","Personal","Teleconference","Unclassified")
 # 
-# generated_chart <- highchart() %>%
-#   hc_xAxis(categories = sample_data[, categories_column],
-#            title = categories_column)
 # 
-# invisible(lapply(measure_columns, function(column) {
-#   generated_chart <<-
-#     hc_add_series(hc = generated_chart, name = column,
-#                   data = sample_data[, column])
-# }))
 # 
-# generated_chart %>%
+#  highchart() %>%
+#   hc_xAxis(categories = "%",
+#            title = "Percentages") %>% 
+#   hc_add_series(data = prc_chart$`Daily Organic Impressions`,
+#                 name = "Daily Organic Impressions") %>%   
+#   hc_add_series(data = prc_chart$`Daily Paid Impressions`,
+#                 name = "Daily Paid Impressions") %>%  
+#   hc_add_series(data = prc_chart$`Daily Viral Impressions`,
+#                 name = "Daily Viral Impressions") %>%    
 #   hc_chart(type = "bar") %>%
 #   hc_plotOptions(series = list(stacking = "percent")) %>%
 #   hc_yAxis(title = list(text = "Percentage")) %>%
-#   hc_legend(reversed = TRUE)
-
-
-
-prc_chart <- post_stats %>% 
-  select(lifetime_post_total_impressions, 
-         lifetime_post_paid_impressions, 
-         lifetime_post_organic_impressions, 
-         lifetime_post_viral_impressions) %>% 
-  mutate_all(as.numeric) %>% 
-  mutate_all(sum) %>% 
-  mutate(lifetime_post_paid_impressions = round(100*lifetime_post_paid_impressions/
-                                                  lifetime_post_total_impressions,2)) %>% 
-  mutate(lifetime_post_organic_impressions = round(100*lifetime_post_organic_impressions/
-                                                     lifetime_post_total_impressions,2)) %>% 
-  mutate(lifetime_post_viral_impressions = round(100*lifetime_post_viral_impressions/
-                                                   lifetime_post_total_impressions,2)) %>% 
-  select(-lifetime_post_total_impressions)
-
-
-colnames(prc_chart) <- c("Daily Paid Impressions", "Daily Organic Impressions", "Daily Viral Impressions")
-
-prc_chart %<>% 
-  .[1,] 
-
-
-
-
- highchart() %>%
-  hc_xAxis(categories = "%",
-           title = "Percentages") %>% 
-  hc_add_series(data = prc_chart$`Daily Organic Impressions`,
-                name = "Daily Organic Impressions") %>%   
-  hc_add_series(data = prc_chart$`Daily Paid Impressions`,
-                name = "Daily Paid Impressions") %>%  
-  hc_add_series(data = prc_chart$`Daily Viral Impressions`,
-                name = "Daily Viral Impressions") %>%    
-  hc_chart(type = "bar") %>%
-  hc_plotOptions(series = list(stacking = "percent")) %>%
-  hc_yAxis(title = list(text = "Percentage")) %>%
-  hc_legend(reversed = TRUE) %>% 
-  hc_add_theme(hc_theme_smpl()) %>% 
-  hc_size(300, 200)  %>%
-  hc_legend(enabled = T, align = "center", verticalAlign = "top",
-            layout = "vertical"
-   )
+#   hc_legend(reversed = TRUE) %>% 
+#   hc_add_theme(hc_theme_smpl()) %>% 
+#   hc_size(300, 200)  %>%
+#   hc_legend(enabled = T, align = "center", verticalAlign = "top",
+#             layout = "vertical"
+#    )
 
 ```
 
