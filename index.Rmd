@@ -250,7 +250,7 @@ cntry_likes %>%
   ) %>%
   highcharter::hc_colorAxis(stops = stops) %>%
   highcharter::hc_title(
-    text = "Total Page Reach (October 9th 2017 - January 7th 2018)"
+    text = "Total Page Likes (11.384 on January 7th 2018)"
   ) %>% 
   highcharter::hc_subtitle(text = "Based on Data from Omar Saif Ghobash's Facebook page. \t By user country in unique users (Total = 264.755)") %>%
 #  highcharter::hc_credits(enabled = TRUE, text = "Based on Data from Omar Saif Ghobash's Facebook page") %>% 
@@ -431,11 +431,12 @@ agender_likes %>%
   )) %>% 
   mutate(likes = as.numeric(likes)) %>% 
   mutate(likes = ifelse(gender == "f", -likes, likes)) %>% 
+  mutate(gender = fct_rev(factor(gender))) %>% 
 ggplot(aes(x=age, y=likes, fill=gender)) + 
   geom_bar(stat="identity", position="identity", aes(x=age, y=likes, fill=gender)) + 
   geom_bar(stat="identity", position="identity") + 
   ggthemes::theme_hc() +
-  ggthemes::scale_fill_hc()
+  ggthemes::scale_fill_fivethirtyeight()
   plotly::ggplotly()
 
 
