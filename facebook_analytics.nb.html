@@ -214,6 +214,10 @@ $(document).ready(function () {
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGFjbWFuOjpwX2xvYWQodGlkeXZlcnNlLCBtYWdyaXR0ciwgc3RyaW5nciwgc2NhbGVzLCBsdWJyaWRhdGUsIHRpZHl0ZXh0LCB0aWR5ciwgZ2d0aGVtZXMsIGphbml0b3IsIFJmYWNlYm9vaylcblxuYGBgIn0= -->
+<pre class="r"><code>pacman::p_load(tidyverse, magrittr, stringr, scales, lubridate, tidytext, tidyr, ggthemes, janitor, Rfacebook)
+</code></pre>
+<!-- rnb-source-end -->
 <!-- rnb-output-begin eyJkYXRhIjoiSW5zdGFsbGluZyBwYWNrYWdlIGludG8g46S847ixQzovVXNlcnMvRmFiaW8vRG9jdW1lbnRzL1Ivd2luLWxpYnJhcnkvMy4046S847iyXG4oYXMg46S847ixbGli46S847iyIGlzIHVuc3BlY2lmaWVkKVxudHJ5aW5nIFVSTCAnaHR0cHM6Ly9jcmFuLnJzdHVkaW8uY29tL2Jpbi93aW5kb3dzL2NvbnRyaWIvMy40L2phbml0b3JfMC4zLjEuemlwJ1xuQ29udGVudCB0eXBlICdhcHBsaWNhdGlvbi96aXAnIGxlbmd0aCA3MTYxNiBieXRlcyAoNjkgS0IpXG5kb3dubG9hZGVkIDY5IEtCXG4ifQ== -->
 <pre><code>Installing package into 㤼㸱C:/Users/Fabio/Documents/R/win-library/3.4㤼㸲
 (as 㤼㸱lib㤼㸲 is unspecified)
@@ -252,10 +256,46 @@ package 㤼㸱janitor㤼㸲 was built under R version 3.4.3</code></pre>
 <h1>Target Page <a href="https://www.facebook.com/OmarSGhobash/" class="uri">https://www.facebook.com/OmarSGhobash/</a></h1>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGFnZSA8LSBnZXRQYWdlKFwiT21hclNHaG9iYXNoXCIsIG15X2tleSwgbiA9IDUwMDApXG5cblxuXG5mb3JtYXQuZmFjZWJvb2suZGF0ZSA8LSBmdW5jdGlvbihkYXRlc3RyaW5nKSB7XG4gICAgZGF0ZSA8LSBhcy5QT1NJWGN0KGRhdGVzdHJpbmcsIGZvcm1hdCA9IFwiJVktJW0tJWRUJUg6JU06JVMrMDAwMFwiLCB0eiA9IFwiR01UXCIpXG59XG4jIyBhZ2dyZWdhdGUgbWV0cmljIGNvdW50cyBvdmVyIG1vbnRoXG5hZ2dyZWdhdGUubWV0cmljIDwtIGZ1bmN0aW9uKG1ldHJpYykge1xuICAgIG0gPC0gYWdncmVnYXRlKHBhZ2VbW3Bhc3RlMChtZXRyaWMsIFwiX2NvdW50XCIpXV0sIGxpc3QobW9udGggPSBwYWdlJG1vbnRoKSwgXG4gICAgICAgIG1lYW4pXG4gICAgbSRtb250aCA8LSBhcy5EYXRlKHBhc3RlMChtJG1vbnRoLCBcIi0xNVwiKSlcbiAgICBtJG1ldHJpYyA8LSBtZXRyaWNcbiAgICByZXR1cm4obSlcbn1cbiMgY3JlYXRlIGRhdGEgZnJhbWUgd2l0aCBhdmVyYWdlIG1ldHJpYyBjb3VudHMgcGVyIG1vbnRoXG5wYWdlJGRhdGV0aW1lIDwtIGZvcm1hdC5mYWNlYm9vay5kYXRlKHBhZ2UkY3JlYXRlZF90aW1lKVxucGFnZSRtb250aCA8LSBmb3JtYXQocGFnZSRkYXRldGltZSwgXCIlWS0lbVwiKVxuZGYubGlzdCA8LSBsYXBwbHkoYyhcImxpa2VzXCIsIFwiY29tbWVudHNcIiwgXCJzaGFyZXNcIiksIGFnZ3JlZ2F0ZS5tZXRyaWMpXG5kZiA8LSBkby5jYWxsKHJiaW5kLCBkZi5saXN0KVxuIyB2aXN1YWxpemUgZXZvbHV0aW9uIGluIG1ldHJpY1xubGlicmFyeShnZ3Bsb3QyKVxubGlicmFyeShzY2FsZXMpXG5nZ3Bsb3QoZGYsIGFlcyh4ID0gbW9udGgsIHkgPSB4LCBncm91cCA9IG1ldHJpYykpICsgZ2VvbV9saW5lKGFlcyhjb2xvciA9IG1ldHJpYykpICsgXG4gICAgc2NhbGVfeF9kYXRlKGRhdGVfYnJlYWtzID0gXCJtb250aFwiLCBsYWJlbHMgPSBkYXRlX2Zvcm1hdChcIiVtLSVZXCIpKSArIHNjYWxlX3lfY29udGludW91cyhcIkF2ZXJhZ2UgY291bnQgcGVyIHBvc3RcIiwgXG4gICAgYnJlYWtzID0gYygxMCwgMTAwLCAxMDAwLCAxMDAwMCwgNTAwMDApKSArIGdndGhlbWVzOjp0aGVtZV9maXZldGhpcnR5ZWlnaHQoKSArIHRoZW1lKGF4aXMudGl0bGUueCA9IGVsZW1lbnRfYmxhbmsoKSlcbmBgYCJ9 -->
+<pre class="r"><code>page &lt;- getPage(&quot;OmarSGhobash&quot;, my_key, n = 5000)
+
+
+
+format.facebook.date &lt;- function(datestring) {
+    date &lt;- as.POSIXct(datestring, format = &quot;%Y-%m-%dT%H:%M:%S+0000&quot;, tz = &quot;GMT&quot;)
+}
+## aggregate metric counts over month
+aggregate.metric &lt;- function(metric) {
+    m &lt;- aggregate(page[[paste0(metric, &quot;_count&quot;)]], list(month = page$month), 
+        mean)
+    m$month &lt;- as.Date(paste0(m$month, &quot;-15&quot;))
+    m$metric &lt;- metric
+    return(m)
+}
+# create data frame with average metric counts per month
+page$datetime &lt;- format.facebook.date(page$created_time)
+page$month &lt;- format(page$datetime, &quot;%Y-%m&quot;)
+df.list &lt;- lapply(c(&quot;likes&quot;, &quot;comments&quot;, &quot;shares&quot;), aggregate.metric)
+df &lt;- do.call(rbind, df.list)
+# visualize evolution in metric
+library(ggplot2)
+library(scales)
+ggplot(df, aes(x = month, y = x, group = metric)) + geom_line(aes(color = metric)) + 
+    scale_x_date(date_breaks = &quot;month&quot;, labels = date_format(&quot;%m-%Y&quot;)) + scale_y_continuous(&quot;Average count per post&quot;, 
+    breaks = c(10, 100, 1000, 10000, 50000)) + ggthemes::theme_fivethirtyeight() + theme(axis.title.x = element_blank())</code></pre>
+<!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGFnZSAlPiUgXG5rbml0cjo6a2FibGUoKVxuXG5nZXRJbnNpZ2h0cyhvYmplY3RfaWQgPSBcIjIyNzA3MTQwNzM0NTE1OFwiLCB0b2tlbiA9IFwiRUFBQ0VkRW9zZTBjQkFMMU0yWFZCT0ZmNnhBT0NqVTdoMXM5TllXbHdxTFpBbG85c2RFN0ZiQlpDd1lhV1dVTGxDZ0pJOWthWkJaQTIyOEFuZVBVUHpjajlTcW5nVW84Qm13aVhQczBHVFNJNGdIek04THZXaFIyZ3Rha0IxdzJwQlU2bk81ZlZhZ0pjZ2o1VjNPOEVLZmRQOFRDS0hmeVBiTUFsUUk0RlZjTnhlSmxSMG42STVzcGlwSW9jWkFvVVpEXCIsIG1ldHJpYyA9IFwicGFnZV9mYW5zXCIpIFxuXG5taW4ocGFnZSRtb250aClcbmBgYCJ9 -->
+<pre class="r"><code>page %&gt;% 
+knitr::kable()
+
+getInsights(object_id = &quot;227071407345158&quot;, token = &quot;EAACEdEose0cBAL1M2XVBOFf6xAOCjU7h1s9NYWlwqLZAlo9sdE7FbBZCwYaWWULlCgJI9kaZBZA228AnePUPzcj9SqngUo8BmwiXPs0GTSI4gHzM8LvWhR2gtakB1w2pBU6nO5fVagJcgj5V3O8EKfdP8TCKHfyPbMAlQI4FVcNxeJlR0n6I5spipIocZAoUZD&quot;, metric = &quot;page_fans&quot;) 
+
+min(page$month)</code></pre>
+<!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
@@ -276,13 +316,102 @@ package 㤼㸱janitor㤼㸲 was built under R version 3.4.3</code></pre>
 <h2>daily views likes and so on</h2>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInRibF9kZiIsInRibCIsImRhdGEuZnJhbWUiXSwibmNvbCI6MTMsIm5yb3ciOjkxfSwicmRmIjoiSDRzSUFBQUFBQUFBQnUyYlMzSWN4eEdHQjlNRE8vZ0FDZkQ5cGk0Z1J0ZXJ1M3JIaFU3Z2xTSzRRTURFU0VJSUJCZ0FhTm83WGNiMzhCVjBJY2sxUUhaK2lha0dUVWxoaHhma2dsT3N2N29xSzkrWjNmekxOOS82Njk5ZW44MW04MW16bU0vbVRSbVczOWxzWTdhWVhWdjkvbjAyYSs2V3dWYjV2VlYrMzd6KytkcS95dS9zOWMrcjU4NS9YOHZ2VC9JcitBM0Jid2grUS9BYmd0OFUvS2JnTndXL0tmaVc0RnVDYndtK0pmZ3R3VzhKZmt2d1c0TGZGdnkyNExjRnZ5MzR0dURiZ204THZpMzRqdUE3Z3U4SXZpUDRIY0h2Q0g1SDhEdUMzeFg4cnVCM0JiOHIrRDNCN3dsK1QvQjdndDhYL0w3Zzl3Vy9ML2dEd1I4SS9rRHdCNEkvRlB5aDRBOEZmeWo0SThFZkNmNUk4RWVDUHhiOHNlQ1BCWDhzK0JQQm53aitSUEFuZ2o4Vi9LbmdUd1YvS3ZnendaOEova3p3WjRJL0YveTU0TThGZnk3NEM4RmZDUDVDOEJlQ3Z4VDhwZUF2Qlg4cCtGZUNmM1dPcnluKzV0dkR2ZFBUTXRnMms0dHY5czZXNWZjWG1YOGo4L051R0VmZWphTTR6alV1OVRxWmRPUkhFK1BaY1dxZWRNN3BBeW5vdXFnN081M3NPNFYxenVtR25ZNThxby9URGVlK3JWR2x0UEhkZUpHbXkwNkh6dHcwNnpEcVZua2tyUWw1UEgzaDB6Q3VYYmd3aEpwWmpldVZoa0VwRE1yTHBIUzVybFVTemVNZVl2UmVaVk5sUUlaQ3gwb3U0enVHc1g3SXFhaUQ4bDVac1FoNUdPcUxsS0ZLcDBzNjZYVFR3RXBraS9TQzBvRTZkRzNGbXcxMEJTSkRQVkp4eldPdUwyTjBXVW4xc0RvR21JcmN2WW9GcnM2NVN1RFNLYklwbkZiK05zR3h3QWpJc1VQSHFZYlpIQkhOWnRHYlMxODIzMFVjQnZReXF6RnZ1cTVUZVd5R09LZ1lOMTAvNkQwWFhmbVhib1dxTEh6d2JOdDNocXlSSFVYekkrTVdLa0pyckNNSHZkekFsV09yQnhYMTFvdG1OZittU3pyYnFiSTJVVVhkOUU2TkpldnNJblI2eUNKbmRXT0xER2VMOWFwNUw4cmhUc2VkS3MybWMxMGE1YnBJenNFOGo4SVhocWxPRjV2eHhuN1VVQmN1SldkT2RsRGFtdldlK1dUa09hZ0lWN0x0ZGMrdVZjNzdvRXEvaU8zQTJIZnNFOVVwbHh0SFZkZ1U5Tmh5TDBSaXRnbjlZRWpyOU5nUUJraHJ6UlhEb093cHd0ZDl2T05hYm9pR0piZ2Q3L29NeWM1Y0Y3R0hWc1hlSjlUUGVjWStRRUhLdXJ1TGFIb3hSTlcwaEFZNEJ4TmlNUm1NUkU4dGx4MWdBdmEyMmw2MzlFNVpQS2p5RnVtb0dpMVNERWkveFJxS29HQnJSSmVkUXd5K0pSS0YyQ0psZ3NZaURiMHlvVWdOMGZheDlpQUpMWE5KbmRGaUNHckh4V2NrOVhQRm1EQ2cwQm1aR2YrV3ZhRmR0YnR3QmsrQ0N6WW00aEJIMHdlQzc0RG5aSmd5SGdYUDZRZU9DOFJtTTl1cGM0NEpqOWVqaVgwSGkzdGp0QzVHV09VSG82RWF2aFpEMytzNEJPTVU0bUNNMWlqZGNFbTVsQ205Wi91VWpMRjFodUY0T05jYm41TmJESy90alg0bjl2VG9ydmQ5TUd3dzYrSGZvTzZxOEE4Uk9lamx1V0xJZUZodkRaejBMNk5QeFlzYStadHhxeGJiOUNiV0JLTmJiVEI2Um9BWkFua21zd0ZxSXd0QzFtRm42Tk5BVjNRWjNZcnFmbExMSFFQOFMyUUJLeFV4QWRWY3pIa3lQZUpZekVqV294VEJHVDlnNGx0b0UrdnhTazAyZmk3aTBJcW5aWnNJOFlVVFdIUE9LTWhLMFM2N2lxWnJKNUl1M1hhdVlXT3ViSm9IMXBGU0tVck83c2lTcVROaXphVjVSOEt2YzFRYVlhTDZvS2dJcmtiZFVCTVRTWm4xaVV3MVEybENhamNZZGRaam1rQ2NjYWJVNkNoOWxEMHFmSk15VTB2MWxBNXhZbDJzYWZPNTVnbThvenhoWjRTR1NDbTV1SlJMSm1GdHVWOWJiNVFuYXArQkZGNUhhSk9HQWtPaTV1MGIzUVNGZWp1eWY3UHhSR2xKUWFUS1dXb2JrOUZUeCtEMG5KcXZLVnBRMmdnZlRHMkFSbEY5dW5haU5vTE56TUZGamphMUp0c1VtYStGZEpQSUdQa0dvNEJjUnRrM29EQ3dhcWd1YU5pSGNhaS9MelVVOVZDRVJCVURldEJQQ1U1UG9lOEFOYWd2dlFqQ3VqTStueHlYRURZbmNZZ3FHQnY3R2dvQW0yY0dXNENieXhrdE1kVXdBb0xIbGtiMGdGc1BPRGU5UDZtTnJlV3BZQjA1TWVjYlh1SEMwTWZBVGo2Wm5BeEN1VlBHK3BSa1U2cVpTdFcxaGxSRVlMUk44OXU1YVJaQUgwN09zTFN2R0VGL3dZZ2ZnVVJITWtqWHhyZG1pQmphQ1RyVUZUZVVUazBnZTNDa2pRNGZacndaSy9GTzJRUjZPRTUzQitZM3F6UzVzbU9NaE9ES25zR29tOW1JbUl2VjRnaU5uUnRsck50VjVlN3dUaXNhR3krR2lSUFJZRHdMUWM0MFdMaU8zaUd3WXpabGdIR29QYnFJTHFlVzdEZ05Kb09qYjVBeGZXSjJ3RXQ0MDdzeVFRRnpNdzJkd0FKUEpLUjNaTlhuMG1aa2tjYjRiTnlCbjNraUZZSHgyRWxLUnYvaEk1czYraWdlTVF4b0VQYmhCdU0vTVhSRDFjQmxjT00wYW5IZTJkaSthWG5CWTVJVDFUR2JUSEdWRGhFTWVKOWdybTFKUmJPTmM4UXRLS2tOelpjaVdmWXk0dXdtL0lMcGhYcFRrR2EycFY2S2hwc2xPcTRuMGdUUlZHY3RoZE40MzF3dk5Qa3o2RVFyWHMxcGJvTXlpUmhCdVc0Q3ozdXlwSW53UWs1SmlnQXhWRWtlbG5WNlh0TVpYMmt5STRwZlQ3dXVGTCtVT1pteXlKbG1vTGRtQmhlNVAyOFlzcEViNW04ZU1sbUVpWEdtUnpzVlJrdzB0d2tnUWRBd0c5R1RIMUVieGhaWDVBbHB2cTBUZHJ0OWdsUThCanBzckl3NFVCY1hHeE1wSUdlUXBQZWtqN1hNVFp3MnJYVzhmREtkR0d3djBMSEgrZms2SFN5T0g5TTFFcVMwRHhpaHllS2N4L3VRNWdTYjRPdHNKTklIaUNrR2ZkbUtOOFpWRzY0YWhHckdNNWpOcnYxYS9sejl0RnRmNG4vUExyN2U3cXBuOE9aS09JVzBXNS9hUUs5c0g5cjBsa3l0bnlweVlzVWtIZUNIdE9STDFhSjZ4N0ErUTFTeWk2NWlxbW5LVTJybTZ0WmR6Wkg2VHRXbTViRzFjMnZkTVBSZlJXTmZQWlFxaUo1R3FxY21XSk9yODZkZXB1S3VjSEV0ZnMwMEFIVGxnSC9BYmVtY0JxTkMrV2hSNndwYXNhSFMzUC93eEc5WWNMWDEvWFpxUGlIWnE2M3lTdkZObVVIdGRDcnBvUkVUOXRSVmhOVDZXTnRjUGJqNmltUWd4b25RTTlFSHI3WXdCckVhMUd2eTFUZXFDT0dwMnAza2FwQ3FweXBibTZBd1YwL1ZiTEJpV0ZPRHZxTFprUEg1RWFqMmt2LzdDUFFKazFwZlFaczRWTXlhQ2tFMHpHd0lvc050UTFDdDhwOElRWDExL084TlFYV1UrTHdROUJrRzhrZEQwQ2VjeUg4eEJOWGZWUHlCRUdTNlZwTWhhT0w3b2FrUVZMM2p5S2JSUzUxRkNVUmxUZzlwNGhXQ3J5TXZxaFZxYmJjdHJ6UmhEUERBdkVlZzFETzFISjF4enB0NFowSzFwcW41WlBPWlhsVTBid2xOSXpQWVQxbkk1Nm1qVEdza21DYklaSzFNTDhkOE4wV2ZlZXE5a24wRlFmMU9sUlJOMDNUeWs3U0pUMzBvZzgzYktBcDFWN0d6NFRWbnFSbG9NVkgybUZkWWlUMzV4SWs5YXcrQ0M1dWsxbndEVitzYWlraExsNmFsWWUxUVArR3JVR2JMSkZzODBWVHN1TnpFNnczTWtyNkJrWnJweGRBNFNxYUtHOWJmZFh6NWZsRnYrdVg3UmJuVGwrOFgvNSsvWDF4OXF6ei9kWGI1OCtUciszdG5lNisrTzlsN3Q1eXRmYzE4Vk9iR3I1bTNSaEh2cjc1bXZoamYyZDg3T1B6SDd2dTk3NWU3cDJmSEp3ZGw5UVh5OEFJNU96N2JPOXc5ZVBmK1pIbDZlbkI4Tk1JN0ZqNVo3cjM5UVlEN0ZuaGJIdmp3Ym5teXR1bjVjUmZZK3pPejZRT0JqMC9QZHBkSDM1ZFY3NVpIWnlQNnlEeDhnZTd2ZmpobDg5c1grTkh5NCs3aHdZOTZrYTJMNlE5SGRuS0h0ZDhkSHg0ZWY1eTg5dDhPOXBmSDVlK2x3dmRxZnUyNk5hWmZPem4rK0dway9Pby9NOHgvS24rVnBQQ2ZzL05QeUM4dC92T3hjR0EyWC8yL2djMDEwVzZjckUxc2Z6aGFiYjMvOWRzZlBoejkrSFcvNnF0ZFA4Y3YvbXpKK0kwWmIxMmMyWXg2c3lsNy9hbHc4ZUJvVklYTnc3Mi9MZy9sSDdmS0hjNnY4T3I5eWNIUjJhaG9aZmIwMVRsdnhwbTN4NGZqek1YMzhiLzhHNlVLRlo5ZE1nQUEifQ== -->
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["date"],"name":[1],"type":["date"],"align":["right"]},{"label":["daily_page_stories"],"name":[2],"type":["chr"],"align":["left"]},{"label":["daily_total_impressions"],"name":[3],"type":["chr"],"align":["left"]},{"label":["daily_total_reach"],"name":[4],"type":["chr"],"align":["left"]},{"label":["daily_total_consumers"],"name":[5],"type":["chr"],"align":["left"]},{"label":["daily_page_consumptions"],"name":[6],"type":["chr"],"align":["left"]},{"label":["daily_post_engagements"],"name":[7],"type":["chr"],"align":["left"]},{"label":["daily_page_engaged_users"],"name":[8],"type":["chr"],"align":["left"]},{"label":["daily_new_likes"],"name":[9],"type":["chr"],"align":["left"]},{"label":["daily_unlikes"],"name":[10],"type":["chr"],"align":["left"]},{"label":["daily_new_follows"],"name":[11],"type":["chr"],"align":["left"]},{"label":["daily_total_video_views"],"name":[12],"type":["chr"],"align":["left"]},{"label":["daily_page_stories_1"],"name":[13],"type":["chr"],"align":["left"]}],"data":[{"1":"2017-10-08","2":"69","3":"4995","4":"4532","5":"608","6":"1114","7":"1179","8":"624","9":"4","10":"NA","11":"4","12":"841","13":"69"},{"1":"2017-10-09","2":"21","3":"2869","4":"1599","5":"48","6":"77","7":"96","8":"56","9":"1","10":"NA","11":"1","12":"67","13":"21"},{"1":"2017-10-10","2":"49","3":"16632","4":"9398","5":"18","6":"39","7":"87","8":"53","9":"1","10":"NA","11":"1","12":"25","13":"49"},{"1":"2017-10-11","2":"157","3":"34972","4":"17566","5":"96","6":"161","7":"313","8":"192","9":"3","10":"2","11":"5","12":"30","13":"157"},{"1":"2017-10-12","2":"45","3":"17952","4":"8140","5":"47","6":"69","7":"111","8":"68","9":"1","10":"NA","11":"2","12":"40","13":"45"},{"1":"2017-10-13","2":"42","3":"6179","4":"3678","5":"38","6":"98","7":"138","8":"56","9":"2","10":"1","11":"2","12":"39","13":"42"},{"1":"2017-10-14","2":"9","3":"4124","4":"2115","5":"11","6":"33","7":"40","8":"17","9":"2","10":"NA","11":"2","12":"20","13":"9"},{"1":"2017-10-15","2":"22","3":"2325","4":"828","5":"17","6":"29","7":"46","8":"28","9":"NA","10":"NA","11":"NA","12":"25","13":"22"},{"1":"2017-10-16","2":"59","3":"2765","4":"1121","5":"20","6":"40","7":"98","8":"59","9":"1","10":"NA","11":"1","12":"12","13":"59"},{"1":"2017-10-17","2":"15","3":"483","4":"215","5":"14","6":"24","7":"37","8":"22","9":"1","10":"1","11":"1","12":"7","13":"15"},{"1":"2017-10-18","2":"53","3":"1343","4":"430","5":"35","6":"81","7":"132","8":"49","9":"1","10":"NA","11":"1","12":"38","13":"53"},{"1":"2017-10-19","2":"24","3":"1095","4":"551","5":"44","6":"70","7":"94","8":"56","9":"NA","10":"NA","11":"NA","12":"13","13":"24"},{"1":"2017-10-20","2":"113","3":"3098","4":"1501","5":"117","6":"256","7":"366","8":"147","9":"2","10":"NA","11":"2","12":"107","13":"113"},{"1":"2017-10-21","2":"76","3":"1839","4":"736","5":"64","6":"143","7":"216","8":"96","9":"2","10":"1","11":"2","12":"58","13":"76"},{"1":"2017-10-22","2":"23","3":"968","4":"395","5":"27","6":"56","7":"77","8":"36","9":"2","10":"NA","11":"2","12":"13","13":"23"},{"1":"2017-10-23","2":"12","3":"404","4":"195","5":"15","6":"37","7":"49","8":"19","9":"NA","10":"1","11":"NA","12":"24","13":"12"},{"1":"2017-10-24","2":"62","3":"1200","4":"588","5":"39","6":"79","7":"138","8":"74","9":"1","10":"1","11":"1","12":"19","13":"62"},{"1":"2017-10-25","2":"25","3":"823","4":"435","5":"15","6":"36","7":"60","8":"35","9":"1","10":"NA","11":"1","12":"122","13":"25"},{"1":"2017-10-26","2":"22","3":"650","4":"291","5":"23","6":"50","7":"69","8":"33","9":"2","10":"NA","11":"1","12":"96","13":"22"},{"1":"2017-10-27","2":"24","3":"611","4":"233","5":"31","6":"57","7":"78","8":"39","9":"1","10":"NA","11":"1","12":"38","13":"24"},{"1":"2017-10-28","2":"20","3":"448","4":"191","5":"15","6":"33","7":"52","8":"29","9":"NA","10":"2","11":"NA","12":"27","13":"20"},{"1":"2017-10-29","2":"22","3":"717","4":"264","5":"19","6":"64","7":"86","8":"28","9":"NA","10":"NA","11":"NA","12":"34","13":"22"},{"1":"2017-10-30","2":"42","3":"848","4":"454","5":"20","6":"45","7":"83","8":"47","9":"1","10":"1","11":"1","12":"27","13":"42"},{"1":"2017-10-31","2":"267","3":"3668","4":"2719","5":"44","6":"91","7":"349","8":"272","9":"7","10":"NA","11":"8","12":"28","13":"267"},{"1":"2017-11-01","2":"681","3":"8849","4":"7685","5":"81","6":"134","7":"801","8":"696","9":"13","10":"1","11":"13","12":"83","13":"681"},{"1":"2017-11-02","2":"619","3":"8135","4":"7541","5":"85","6":"146","7":"754","8":"658","9":"9","10":"3","11":"10","12":"62","13":"619"},{"1":"2017-11-03","2":"158","3":"2540","4":"1442","5":"52","6":"133","7":"277","8":"167","9":"11","10":"2","11":"11","12":"47","13":"158"},{"1":"2017-11-04","2":"140","3":"2001","4":"1297","5":"61","6":"95","7":"226","8":"190","9":"9","10":"2","11":"9","12":"28","13":"140"},{"1":"2017-11-05","2":"86","3":"2621","4":"1637","5":"196","6":"420","7":"502","8":"235","9":"4","10":"1","11":"5","12":"473","13":"86"},{"1":"2017-11-06","2":"385","3":"11656","4":"9777","5":"1331","6":"2273","7":"2594","8":"1558","9":"63","10":"NA","11":"63","12":"2137","13":"385"},{"1":"2017-11-07","2":"2598","3":"5112","4":"3329","5":"353","6":"621","7":"881","8":"2807","9":"2337","10":"5","11":"2338","12":"368","13":"2598"},{"1":"2017-11-08","2":"1393","3":"12110","4":"3493","5":"119","6":"307","7":"485","8":"1448","9":"1211","10":"15","11":"1211","12":"296","13":"1393"},{"1":"2017-11-09","2":"157","3":"4134","4":"2301","5":"163","6":"320","7":"461","8":"238","9":"15","10":"10","11":"16","12":"334","13":"157"},{"1":"2017-11-10","2":"172","3":"3829","4":"1907","5":"78","6":"176","7":"346","8":"163","9":"2","10":"5","11":"2","12":"252","13":"172"},{"1":"2017-11-11","2":"94","3":"3875","4":"2090","5":"88","6":"142","7":"232","8":"149","9":"4","10":"4","11":"4","12":"365","13":"94"},{"1":"2017-11-12","2":"37","3":"1551","4":"727","5":"62","6":"105","7":"138","8":"76","9":"3","10":"1","11":"3","12":"233","13":"37"},{"1":"2017-11-13","2":"52","3":"2541","4":"1552","5":"59","6":"113","7":"160","8":"85","9":"3","10":"3","11":"3","12":"494","13":"52"},{"1":"2017-11-14","2":"160","3":"3609","4":"2068","5":"77","6":"161","7":"314","8":"186","9":"6","10":"4","11":"7","12":"502","13":"160"},{"1":"2017-11-15","2":"257","3":"3821","4":"2149","5":"54","6":"91","7":"338","8":"263","9":"10","10":"7","11":"10","12":"94","13":"257"},{"1":"2017-11-16","2":"128","3":"3595","4":"1775","5":"62","6":"137","7":"259","8":"134","9":"5","10":"6","11":"5","12":"81","13":"128"},{"1":"2017-11-17","2":"120","3":"2932","4":"1806","5":"54","6":"136","7":"252","8":"135","9":"3","10":"10","11":"3","12":"47","13":"120"},{"1":"2017-11-18","2":"175","3":"2867","4":"2071","5":"52","6":"97","7":"265","8":"199","9":"5","10":"6","11":"5","12":"38","13":"175"},{"1":"2017-11-19","2":"80","3":"1603","4":"1157","5":"28","6":"60","7":"138","8":"101","9":"2","10":"2","11":"2","12":"30","13":"80"},{"1":"2017-11-20","2":"81","3":"2336","4":"1269","5":"39","6":"88","7":"165","8":"100","9":"3","10":"3","11":"3","12":"119","13":"81"},{"1":"2017-11-21","2":"129","3":"4096","4":"2273","5":"64","6":"126","7":"251","8":"136","9":"2","10":"1","11":"2","12":"277","13":"129"},{"1":"2017-11-22","2":"126","3":"4265","4":"2711","5":"72","6":"160","7":"274","8":"154","9":"12","10":"5","11":"11","12":"460","13":"126"},{"1":"2017-11-23","2":"124","3":"2459","4":"1133","5":"77","6":"148","7":"269","8":"139","9":"2","10":"3","11":"2","12":"115","13":"124"},{"1":"2017-11-24","2":"80","3":"2046","4":"909","5":"47","6":"105","7":"180","8":"96","9":"3","10":"3","11":"3","12":"53","13":"80"},{"1":"2017-11-25","2":"11","3":"531","4":"261","5":"18","6":"33","7":"44","8":"24","9":"NA","10":"3","11":"NA","12":"21","13":"11"},{"1":"2017-11-26","2":"36","3":"1214","4":"710","5":"25","6":"44","7":"77","8":"43","9":"2","10":"1","11":"2","12":"13","13":"36"},{"1":"2017-11-27","2":"19","3":"1096","4":"711","5":"31","6":"54","7":"72","8":"41","9":"1","10":"3","11":"1","12":"19","13":"19"},{"1":"2017-11-28","2":"3899","3":"3791","4":"2170","5":"159","6":"326","7":"556","8":"4032","9":"3660","10":"2","11":"3661","12":"35","13":"3899"},{"1":"2017-11-29","2":"172","3":"3563","4":"2219","5":"130","6":"251","7":"413","8":"218","9":"8","10":"22","11":"8","12":"46","13":"172"},{"1":"2017-11-30","2":"173","3":"3392","4":"2124","5":"110","6":"211","7":"374","8":"202","9":"9","10":"9","11":"9","12":"51","13":"173"},{"1":"2017-12-01","2":"65","3":"2051","4":"866","5":"47","6":"92","7":"150","8":"77","9":"6","10":"10","11":"6","12":"27","13":"65"},{"1":"2017-12-02","2":"110","3":"2390","4":"1341","5":"84","6":"182","7":"278","8":"139","9":"11","10":"11","11":"11","12":"219","13":"110"},{"1":"2017-12-03","2":"32","3":"1836","4":"1541","5":"37","6":"67","7":"97","8":"55","9":"2","10":"8","11":"2","12":"381","13":"32"},{"1":"2017-12-04","2":"113","3":"2195","4":"1079","5":"93","6":"200","7":"306","8":"144","9":"4","10":"9","11":"4","12":"383","13":"113"},{"1":"2017-12-05","2":"62","3":"1941","4":"743","5":"53","6":"135","7":"194","8":"64","9":"2","10":"6","11":"2","12":"117","13":"62"},{"1":"2017-12-06","2":"34","3":"2519","4":"1328","5":"48","6":"108","7":"140","8":"66","9":"1","10":"6","11":"1","12":"55","13":"34"},{"1":"2017-12-07","2":"53","3":"2178","4":"1038","5":"51","6":"124","7":"169","8":"66","9":"6","10":"4","11":"6","12":"41","13":"53"},{"1":"2017-12-08","2":"60","3":"2417","4":"1168","5":"72","6":"139","7":"198","8":"99","9":"NA","10":"4","11":"NA","12":"31","13":"60"},{"1":"2017-12-09","2":"37","3":"1648","4":"934","5":"60","6":"104","7":"137","8":"77","9":"3","10":"6","11":"4","12":"22","13":"37"},{"1":"2017-12-10","2":"3","3":"307","4":"168","5":"6","6":"10","7":"12","8":"8","9":"1","10":"6","11":"1","12":"11","13":"3"},{"1":"2017-12-11","2":"21","3":"753","4":"310","5":"18","6":"34","7":"50","8":"33","9":"3","10":"8","11":"3","12":"16","13":"21"},{"1":"2017-12-12","2":"33","3":"1123","4":"434","5":"29","6":"59","7":"89","8":"39","9":"2","10":"2","11":"2","12":"21","13":"33"},{"1":"2017-12-13","2":"33","3":"1230","4":"384","5":"36","6":"72","7":"105","8":"48","9":"NA","10":"3","11":"NA","12":"13","13":"33"},{"1":"2017-12-14","2":"58","3":"1589","4":"624","5":"53","6":"107","7":"162","8":"71","9":"2","10":"2","11":"2","12":"24","13":"58"},{"1":"2017-12-15","2":"48","3":"1479","4":"883","5":"46","6":"88","7":"128","8":"68","9":"7","10":"9","11":"7","12":"22","13":"48"},{"1":"2017-12-16","2":"36","3":"1153","4":"825","5":"23","6":"32","7":"66","8":"47","9":"1","10":"6","11":"1","12":"7","13":"36"},{"1":"2017-12-17","2":"21","3":"501","4":"247","5":"24","6":"45","7":"61","8":"32","9":"5","10":"3","11":"5","12":"25","13":"21"},{"1":"2017-12-18","2":"45","3":"1114","4":"500","5":"38","6":"76","7":"113","8":"58","9":"7","10":"5","11":"7","12":"82","13":"45"},{"1":"2017-12-19","2":"260","3":"4497","4":"2373","5":"174","6":"418","7":"660","8":"283","9":"5","10":"8","11":"5","12":"93","13":"260"},{"1":"2017-12-20","2":"430","3":"6107","4":"5180","5":"262","6":"486","7":"900","8":"591","9":"15","10":"8","11":"15","12":"81","13":"430"},{"1":"2017-12-21","2":"158","3":"2093","4":"1294","5":"109","6":"206","7":"356","8":"216","9":"5","10":"5","11":"5","12":"49","13":"158"},{"1":"2017-12-22","2":"252","3":"3869","4":"2341","5":"141","6":"201","7":"440","8":"321","9":"12","10":"6","11":"11","12":"25","13":"252"},{"1":"2017-12-23","2":"81","3":"1473","4":"1127","5":"60","6":"100","7":"168","8":"80","9":"12","10":"7","11":"13","12":"28","13":"81"},{"1":"2017-12-24","2":"13","3":"216","4":"117","5":"14","6":"34","7":"38","8":"20","9":"8","10":"5","11":"8","12":"6","13":"13"},{"1":"2017-12-25","2":"35","3":"911","4":"488","5":"40","6":"78","7":"108","8":"57","9":"3","10":"4","11":"3","12":"142","13":"35"},{"1":"2017-12-26","2":"154","3":"4012","4":"2207","5":"154","6":"265","7":"412","8":"229","9":"4","10":"4","11":"4","12":"309","13":"154"},{"1":"2017-12-27","2":"266","3":"5439","4":"3168","5":"220","6":"368","7":"609","8":"386","9":"20","10":"8","11":"20","12":"198","13":"266"},{"1":"2017-12-28","2":"180","3":"3004","4":"1668","5":"67","6":"164","7":"316","8":"210","9":"24","10":"6","11":"24","12":"65","13":"180"},{"1":"2017-12-29","2":"314","3":"4592","4":"3058","5":"103","6":"193","7":"459","8":"333","9":"46","10":"9","11":"46","12":"42","13":"314"},{"1":"2017-12-30","2":"281","3":"2468","4":"2093","5":"62","6":"93","7":"264","8":"307","9":"109","10":"10","11":"111","12":"25","13":"281"},{"1":"2017-12-31","2":"115","3":"1191","4":"879","5":"25","6":"58","7":"78","8":"122","9":"90","10":"6","11":"90","12":"92","13":"115"},{"1":"2018-01-01","2":"168","3":"2085","4":"1414","5":"62","6":"118","7":"172","8":"192","9":"114","10":"2","11":"114","12":"29","13":"168"},{"1":"2018-01-02","2":"299","3":"3405","4":"2518","5":"47","6":"87","7":"295","8":"309","9":"91","10":"NA","11":"92","12":"19","13":"299"},{"1":"2018-01-03","2":"135","3":"2128","4":"1400","5":"41","6":"111","7":"182","8":"142","9":"62","10":"7","11":"62","12":"216","13":"135"},{"1":"2018-01-04","2":"480","3":"5970","4":"4340","5":"93","6":"228","7":"633","8":"464","9":"71","10":"9","11":"71","12":"405","13":"480"},{"1":"2018-01-05","2":"342","3":"5634","4":"3887","5":"103","6":"211","7":"494","8":"380","9":"56","10":"5","11":"56","12":"507","13":"342"},{"1":"2018-01-06","2":"58","3":"1748","4":"1068","5":"52","6":"121","7":"170","8":"94","9":"7","10":"6","11":"8","12":"192","13":"58"}],"options":{"columns":{"min":{},"max":[10],"total":[13]},"rows":{"min":[10],"max":[10],"total":[91]},"pages":{}}}
-  </script>
-</div>
-<!-- rnb-frame-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGFnZXMgPC0gcmVhZHI6OnJlYWRfY3N2KFwiZGF0YS9wYWdlcy5jc3ZcIikgJT4lIGphbml0b3I6OmNsZWFuX25hbWVzKClcbmBgYCJ9 -->
+<pre class="r"><code>pages &lt;- readr::read_csv(&quot;data/pages.csv&quot;) %&gt;% janitor::clean_names()</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiRHVwbGljYXRlZCBjb2x1bW4gbmFtZXMgZGVkdXBsaWNhdGVkOiAnRGFpbHkgUGFnZSBTdG9yaWVzJyA9PiAnRGFpbHkgUGFnZSBTdG9yaWVzXzEnIFsxM11QYXJzZWQgd2l0aCBjb2x1bW4gc3BlY2lmaWNhdGlvbjpcbmNvbHMoXG4gIERhdGUgPSBjb2xfZGF0ZShmb3JtYXQgPSBcIlwiKSxcbiAgYERhaWx5IFBhZ2UgU3Rvcmllc2AgPSBjb2xfY2hhcmFjdGVyKCksXG4gIGBEYWlseSBUb3RhbCBJbXByZXNzaW9uc2AgPSBjb2xfY2hhcmFjdGVyKCksXG4gIGBEYWlseSBUb3RhbCBSZWFjaGAgPSBjb2xfY2hhcmFjdGVyKCksXG4gIGBEYWlseSBUb3RhbCBDb25zdW1lcnNgID0gY29sX2NoYXJhY3RlcigpLFxuICBgRGFpbHkgUGFnZSBDb25zdW1wdGlvbnNgID0gY29sX2NoYXJhY3RlcigpLFxuICBgRGFpbHkgUG9zdCBFbmdhZ2VtZW50c2AgPSBjb2xfY2hhcmFjdGVyKCksXG4gIGBEYWlseSBQYWdlIEVuZ2FnZWQgVXNlcnNgID0gY29sX2NoYXJhY3RlcigpLFxuICBgRGFpbHkgTmV3IExpa2VzYCA9IGNvbF9jaGFyYWN0ZXIoKSxcbiAgYERhaWx5IFVubGlrZXNgID0gY29sX2NoYXJhY3RlcigpLFxuICBgRGFpbHkgTmV3IEZvbGxvd3NgID0gY29sX2NoYXJhY3RlcigpLFxuICBgRGFpbHkgVG90YWwgVmlkZW8gVmlld3NgID0gY29sX2NoYXJhY3RlcigpLFxuICBgRGFpbHkgUGFnZSBTdG9yaWVzXzFgID0gY29sX2NoYXJhY3RlcigpXG4pXG4ifQ== -->
+<pre><code>Duplicated column names deduplicated: 'Daily Page Stories' =&gt; 'Daily Page Stories_1' [13]Parsed with column specification:
+cols(
+  Date = col_date(format = &quot;&quot;),
+  `Daily Page Stories` = col_character(),
+  `Daily Total Impressions` = col_character(),
+  `Daily Total Reach` = col_character(),
+  `Daily Total Consumers` = col_character(),
+  `Daily Page Consumptions` = col_character(),
+  `Daily Post Engagements` = col_character(),
+  `Daily Page Engaged Users` = col_character(),
+  `Daily New Likes` = col_character(),
+  `Daily Unlikes` = col_character(),
+  `Daily New Follows` = col_character(),
+  `Daily Total Video Views` = col_character(),
+  `Daily Page Stories_1` = col_character()
+)</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZHNjcnMyIDwtIGFzLmxpc3QocGFnZXNbMSxdKVxucGFnZXMgJTw+JSBmaWx0ZXIoIWlzLm5hKGRhdGUpKSBcbnBhZ2VzICU+JSBcbiAgc2VsZWN0KC1kYXRlKSAlPiUgXG4gIG11dGF0ZV9hbGwoZnVucyhhcy5udW1lcmljKSkgJT4lIFxuICBzdW1tYXJpc2VfYWxsKGZ1bnMoc3VtKC4sIG5hLnJtID0gVCkpKSAlPiUgXG4gIGdhdGhlcigpICU+JSBcbiAga25pdHI6OmthYmxlKClcbmBgYCJ9 -->
+<pre class="r"><code>dscrs2 &lt;- as.list(pages[1,])
+pages %&lt;&gt;% filter(!is.na(date)) 
+pages %&gt;% 
+  select(-date) %&gt;% 
+  mutate_all(funs(as.numeric)) %&gt;% 
+  summarise_all(funs(sum(., na.rm = T))) %&gt;% 
+  gather() %&gt;% 
+  knitr::kable()</code></pre>
+<!-- rnb-source-end -->
+
+<!-- rnb-html-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbImtuaXRfYXNpcyJdLCJzaXppbmdQb2xpY3kiOltdfX0= -->
+
+<table>
+<thead>
+<tr class="header">
+<th align="left">key</th>
+<th align="right">value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">daily_page_stories</td>
+<td align="right">18500</td>
+</tr>
+<tr class="even">
+<td align="left">daily_total_impressions</td>
+<td align="right">316444</td>
+</tr>
+<tr class="odd">
+<td align="left">daily_total_reach</td>
+<td align="right">185502</td>
+</tr>
+<tr class="even">
+<td align="left">daily_total_consumers</td>
+<td align="right">7899</td>
+</tr>
+<tr class="odd">
+<td align="left">daily_page_consumptions</td>
+<td align="right">15209</td>
+</tr>
+<tr class="even">
+<td align="left">daily_post_engagements</td>
+<td align="right">25301</td>
+</tr>
+<tr class="odd">
+<td align="left">daily_page_engaged_users</td>
+<td align="right">22735</td>
+</tr>
+<tr class="even">
+<td align="left">daily_new_likes</td>
+<td align="right">8270</td>
+</tr>
+<tr class="odd">
+<td align="left">daily_unlikes</td>
+<td align="right">375</td>
+</tr>
+<tr class="even">
+<td align="left">daily_new_follows</td>
+<td align="right">8283</td>
+</tr>
+<tr class="odd">
+<td align="left">daily_total_video_views</td>
+<td align="right">12943</td>
+</tr>
+<tr class="even">
+<td align="left">daily_page_stories_1</td>
+<td align="right">18500</td>
+</tr>
+</tbody>
+</table>
+
+
+<!-- rnb-html-end -->
+
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
@@ -290,6 +419,33 @@ package 㤼㸱janitor㤼㸲 was built under R version 3.4.3</code></pre>
 <h2>Daily Reach by Country</h2>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY250cnlfZGFpbHlfcmVhY2ggPC0gcmVhZHI6OnJlYWRfY3N2KFwiZGF0YS9jbnRyeV9kYWlseV9yZWFjaC5jc3ZcIikgJT4lIGphbml0b3I6OmNsZWFuX25hbWVzKClcblxuZHNjcnMzIDwtIGFzLmxpc3QoY250cnlfZGFpbHlfcmVhY2hbMSxdKVxuXG5jbnRyeV9kYWlseV9yZWFjaCAlPD4lIGZpbHRlcighaXMubmEoZGF0ZSkpIFxuXG5jbnRyeSA8LSBjb2xuYW1lcyhjbnRyeV9kYWlseV9yZWFjaClbLTFdICU+JSBzdHJfZXh0cmFjdChcIi4uJFwiKSAlPiUgXG4gIGNvdW50cnljb2RlOjpjb3VudHJ5Y29kZShcImlzbzJjXCIsIFwiY291bnRyeS5uYW1lXCIpIFxuXG5jbnRyeVsxMzRdIDwtIFwiS29zb3ZvXCJcblxuY250cnkgPC0gYyhcImRhdGVcIiwgY250cnkpXG5cbmNvbG5hbWVzKGNudHJ5X2RhaWx5X3JlYWNoKSA8LSBjbnRyeVxuXG5jbnRyeV9kYWlseV9yZWFjaCAlPD4lIFxuICBnYXRoZXIoXCJjbnRyeVwiLCBcInJlYWNoXCIsIC1kYXRlKSAlPiUgXG4gIG11dGF0ZShyZWFjaCA9IGFzLm51bWVyaWMocmVhY2gpKVxuXG5wYWdlcyAlPiUgXG4gIHNlbGVjdCgtZGF0ZSkgJT4lIFxuICBtdXRhdGVfYWxsKGZ1bnMoYXMubnVtZXJpYykpICU+JSBcbiAgc3VtbWFyaXNlX2FsbChmdW5zKHN1bSguLCBuYS5ybSA9IFQpKSkgJT4lIFxuICBnYXRoZXIoKSAlPiUgXG4gIGtuaXRyOjprYWJsZSgpXG5gYGAifQ== -->
+<pre class="r"><code>cntry_daily_reach &lt;- readr::read_csv(&quot;data/cntry_daily_reach.csv&quot;) %&gt;% janitor::clean_names()
+
+dscrs3 &lt;- as.list(cntry_daily_reach[1,])
+
+cntry_daily_reach %&lt;&gt;% filter(!is.na(date)) 
+
+cntry &lt;- colnames(cntry_daily_reach)[-1] %&gt;% str_extract(&quot;..$&quot;) %&gt;% 
+  countrycode::countrycode(&quot;iso2c&quot;, &quot;country.name&quot;) 
+
+cntry[134] &lt;- &quot;Kosovo&quot;
+
+cntry &lt;- c(&quot;date&quot;, cntry)
+
+colnames(cntry_daily_reach) &lt;- cntry
+
+cntry_daily_reach %&lt;&gt;% 
+  gather(&quot;cntry&quot;, &quot;reach&quot;, -date) %&gt;% 
+  mutate(reach = as.numeric(reach))
+
+pages %&gt;% 
+  select(-date) %&gt;% 
+  mutate_all(funs(as.numeric)) %&gt;% 
+  summarise_all(funs(sum(., na.rm = T))) %&gt;% 
+  gather() %&gt;% 
+  knitr::kable()</code></pre>
+<!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
@@ -298,6 +454,50 @@ package 㤼㸱janitor㤼㸲 was built under R version 3.4.3</code></pre>
 <h1>highcharter</h1>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuaGNfd29ybGRfbWFwX21vdGlvbiA8LSBmdW5jdGlvbihkYXRhLCB5ZWFyID0gXCJ5ZWFyXCIsIGlzbzMgPSBcImlzbzNcIiwgdmFsdWUgPSBcInBlcmNcIiwgbGFiZWwgPSBcIlwiKXtcbiAgZHMgPC0gZGF0YVssYyh5ZWFyLCBpc28zLCB2YWx1ZSldXG4gIGNvbG5hbWVzKGRzKSA8LSBjKFwieWVhclwiLCBcImlzbzNcIiwgXCJ2YWx1ZVwiKVxuICBkcyA8LSBkcyAlPiVcbiAgICAjbXV0YXRlKGlkID0gMTpuKCkpICU+JVxuICAgICNtdXRhdGUocGVyYyA9IGlmZWxzZShwZXJjIDwgMC4wMSAmIHBlcmMgPiAtMC4wMSwgMCwgcGVyYykpICU+JVxuICAgIGdyb3VwX2J5KGlzbzMpICU+JSBcbiAgICAjc3BsaXQoLiRpZCkgIyBmcm9tIGJhc2UgUlxuICAgIGRvKGl0ZW0gPSBsaXN0KFxuICAgICAgaXNvMyA9IGZpcnN0KC4kaXNvMyksXG4gICAgICBzZXF1ZW5jZSA9IC4kdmFsdWUsXG4gICAgICB2YWx1ZSA9IGZpcnN0KC4kdmFsdWUpKVxuICAgICkgJT4lIFxuICAgIC4kaXRlbVxuICAjZHNbWzRdXVxuICBoaWdoX21hcCA8LSBoaWdoY2hhcnRlcjo6aGlnaGNoYXJ0KHR5cGUgPSBcIm1hcFwiKSAlPiUgXG4gICAgaGlnaGNoYXJ0ZXI6OmhjX2FkZF9zZXJpZXMoXG4gICAgICBkYXRhID0gZHMsXG4gICAgICBuYW1lID0gbGFiZWwsXG4gICAgICBtYXBEYXRhID0gd29ybGRnZW9qc29uLFxuICAgICAgam9pbkJ5ID0gXCJpc28zXCIsXG4gICAgICBib3JkZXJXaWR0aCA9IDAuMDFcbiAgICApICU+JSBcbiAgICAjaGlnaGNoYXJ0ZXI6OmhjX2NvbG9yQXhpcyhzdG9wcyA9IGhpZ2hjaGFydGVyOjpjb2xvcl9zdG9wcygpKSAlPiUgIFxuICAgICNoaWdoY2hhcnRlcjo6aGNfY29sb3JBeGlzKHN0b3BzID0gc3RvcHMpICU+JVxuICAgICMgIGhpZ2hjaGFydGVyOjpoY19sZWdlbmQobGF5b3V0ID0gXCJ2ZXJ0aWNhbFwiLCByZXZlcnNlZCA9IFRSVUUsXG4gICAgIyAgICAgICAgICAgIGZsb2F0aW5nID0gVFJVRSwgYWxpZ24gPSBcInJpZ2h0XCIpICU+JSBcbiAgICBoaWdoY2hhcnRlcjo6aGNfYWRkX3RoZW1lKGhpZ2hjaGFydGVyOjpoY190aGVtZV9zbXBsKCkpICU+JSBcbiAgICBoaWdoY2hhcnRlcjo6aGNfbW90aW9uKFxuICAgICAgZW5hYmxlZCA9IFQsXG4gICAgICBheGlzTGFiZWwgPSBcInllYXJcIixcbiAgICAgIGxhYmVscyA9IHNvcnQodW5pcXVlKGRhdGEkeWVhcikpLFxuICAgICAgc2VyaWVzID0gMCxcbiAgICAgIHVwZGF0ZUl0ZXJ2YWwgPSA1MCxcbiAgICAgIG1hZ25ldCA9IGxpc3QoXG4gICAgICAgIHJvdW5kID0gXCJmbG9vclwiLFxuICAgICAgICBzdGVwID0gMC4wMVxuICAgICAgKVxuICAgICkgXG4gIFxuICByZXR1cm4oaGlnaF9tYXApXG59XG5gYGAifQ== -->
+<pre class="r"><code>hc_world_map_motion &lt;- function(data, year = &quot;year&quot;, iso3 = &quot;iso3&quot;, value = &quot;perc&quot;, label = &quot;&quot;){
+  ds &lt;- data[,c(year, iso3, value)]
+  colnames(ds) &lt;- c(&quot;year&quot;, &quot;iso3&quot;, &quot;value&quot;)
+  ds &lt;- ds %&gt;%
+    #mutate(id = 1:n()) %&gt;%
+    #mutate(perc = ifelse(perc &lt; 0.01 &amp; perc &gt; -0.01, 0, perc)) %&gt;%
+    group_by(iso3) %&gt;% 
+    #split(.$id) # from base R
+    do(item = list(
+      iso3 = first(.$iso3),
+      sequence = .$value,
+      value = first(.$value))
+    ) %&gt;% 
+    .$item
+  #ds[[4]]
+  high_map &lt;- highcharter::highchart(type = &quot;map&quot;) %&gt;% 
+    highcharter::hc_add_series(
+      data = ds,
+      name = label,
+      mapData = worldgeojson,
+      joinBy = &quot;iso3&quot;,
+      borderWidth = 0.01
+    ) %&gt;% 
+    #highcharter::hc_colorAxis(stops = highcharter::color_stops()) %&gt;%  
+    #highcharter::hc_colorAxis(stops = stops) %&gt;%
+    #  highcharter::hc_legend(layout = &quot;vertical&quot;, reversed = TRUE,
+    #            floating = TRUE, align = &quot;right&quot;) %&gt;% 
+    highcharter::hc_add_theme(highcharter::hc_theme_smpl()) %&gt;% 
+    highcharter::hc_motion(
+      enabled = T,
+      axisLabel = &quot;year&quot;,
+      labels = sort(unique(data$year)),
+      series = 0,
+      updateIterval = 50,
+      magnet = list(
+        round = &quot;floor&quot;,
+        step = 0.01
+      )
+    ) 
+  
+  return(high_map)
+}</code></pre>
+<!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->

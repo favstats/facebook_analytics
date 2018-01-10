@@ -1,0 +1,192 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+
+```{r}
+install.packages("httr")
+if (!"devtools" %in% installed.packages()) install.packages("devtools")
+require(devtools)
+devtools::install_version("httr", version="0.6.0", repos="http://cran.us.r-project.org")
+if (!"SocialMediaLab" %in% installed.packages()) {
+devtools::install_github("voson-lab/SocialMediaLab/SocialMediaLab")
+}
+require(SocialMediaLab)
+if (!"magrittr" %in% installed.packages()) install.packages("magrittr")
+require(magrittr)
+if (!"igraph" %in% installed.packages()) install.packages("igraph")
+require(igraph)
+if (!"gender" %in% installed.packages()) devtools::install_github("ropensci/genderdata")
+require(gender)
+
+library(httr)
+
+
+appID <- "194703717744839"
+appSecret <- "48aef26dfd544cab76cd9ea6ebf6d2af"
+install.packages("httr")
+library(igraph)
+library(genderdata)
+```
+
+```{r}
+g_bimodal_facebook_star_wars <- Authenticate("Facebook", 
+                                             appID = appID, 
+                                             appSecret = appSecret) %>%
+                      SaveCredential("FBCredential.RDS") %>%
+                      Collect(pageName = "OmarSGhobash",
+                              rangeFrom = "2017-10-09", 
+                              rangeTo = "2018-01-08", 
+                              writeToFile = TRUE) %>%
+                      Create("Bimodal")
+
+omar <- read_csv("2017-10-09_to_2018-01-08_OmarSGhobash_FacebookData.csv")
+View(omar)
+
+g_bimodal_facebook_star_wars <- LoadCredential("FBCredential.RDS") %>%
+          Collect(pageName="StarTrek", 
+                  rangeFrom="2015-03-01",
+                  rangeTo="2015-03-02", 
+                  writeToFile=TRUE) %>%
+  Create("Bimodal")
+
+
+
+#list of nodes
+V(g_bimodal_facebook_star_wars)
+#list of edges
+E(g_bimodal_facebook_star_wars)
+#accessing particular node
+V(g_bimodal_facebook_star_wars)[1]
+#accessing particular edge
+E(g_bimodal_facebook_star_wars)[1]
+#list of "id" (node) attributes
+V(g_bimodal_facebook_star_wars)$id
+#list of "weight" (edge) attributes
+E(g_bimodal_facebook_star_wars)$weight
+#number of nodes in network
+vcount(g_bimodal_facebook_star_wars)
+#another way
+length(V(g_bimodal_facebook_star_wars))
+#number of edges
+ecount(g_bimodal_facebook_star_wars)
+#another way
+length(E(g_bimodal_facebook_star_wars))
+#list of the node attributes
+list.node.attributes(g_bimodal_facebook_star_wars)
+#list of the edge attributes
+list.edge.attributes(g_bimodal_facebook_star_wars)
+#test whether graph is "simple" (no loops or multiple edges)
+is.simple(g_bimodal_facebook_star_wars)
+
+# who are the neighbours of node #42?
+neighbors(g_bimodal_facebook_star_wars,1)
+#this is not a weakly connected component
+is.connected(g_bimodal_facebook_star_wars, mode = "weak")
+
+#information on connected components
+cc <- clusters(g_bimodal_facebook_star_wars)
+#which component
+cc$membership
+#size of each component
+cc$csize
+#number of components
+cc$no
+#subnetwork - giant component
+g3 <- induced_subgraph(g_bimodal_facebook_star_wars,
+which(cc$membership == which.max(cc$csize)))
+
+#node indegree
+degree(g3, mode="in")
+#node outdegree
+degree(g3, mode="out")
+#node indegree, using edge weights
+ind <- strength(g3, mode="in")
+#top-5 nodes, based on (weighted) indegree
+V(g3)[order(ind, decreasing=T)[1:3]]
+#closeness centrality
+closeness(g3)
+#betweenness centrality
+betweenness(g3)
+#eigenvector centrality
+evcent(g3)$vector
+
+
+# density
+graph.density(g3)
+# (global) clustering coefficient
+# rel. frequency connected triples close to form triangles
+transitivity(g3)
+# number of dyads with reciprocated (mutual)
+# edges/number of dyads with single edge
+reciprocity(g3, mode="default")
+#total number of reciprocated edges/total number of edges
+reciprocity(g3, mode="ratio")
+
+
+
+
+## some data preparation
+# coerce to factor
+V(g_bimodal_facebook_star_wars)$type <-
+as.factor(V(g_bimodal_facebook_star_wars)$type)
+# coerce all posts (i.e. "1") to logical (i.e. FALSE)
+V(g_bimodal_facebook_star_wars)$type[which(V(g_bimodal_facebook_star_wars)$type=="1")] <-
+as.logical(FALSE)
+# coerce all users (i.e. "2") to logical (i.e. TRUE)
+V(g_bimodal_facebook_star_wars)$type[
+which(V(g_bimodal_facebook_star_wars)$type=="2")] <-
+as.logical(TRUE)
+# now project the network
+projection_g_bimodal_facebook_star_wars <-
+bipartite.projection(g_bimodal_facebook_star_wars)
+
+str(projection_g_bimodal_facebook_star_wars[[1]])
+plot(projection_g_bimodal_facebook_star_wars[[1]])
+
+imc_starwars <- infomap.community(
+projection_g_bimodal_facebook_star_wars[[2]], nb.trials = 3)
+
+
+
+# create a vector of users with their assigned community number
+communityMembership_starwars <- membership(imc_starwars)
+# summarise the distribution of users to communities
+commDistribution_starwars <- summary(as.factor(communityMembership_starwars))
+# which community has the max number of users
+tail(sort(commDistribution_starwars),n=1)
+# create a list of communities that includes the users assigned to each community
+communities_starwars <- communities(imc_starwars)
+# look at the members of the *least* populated community
+communities_starwars[names(head(sort(commDistribution_starwars),n=1))]
+
+
+
+library(gender)
+# Star Wars
+userNames <- V(g_bimodal_facebook_star_wars)$name
+firstNames <- sub(" .*", "", userNames)
+firstNames <- gsub( "[^[:alnum:]-]", "", firstNames)
+genderPredictions_star_wars <- gender(firstNames, method = "ssa")
+summary(as.factor(genderPredictions_star_wars$gender))
+## Expressed as percentages:
+paste0("Female: ",round(length(as.factor(
+which(genderPredictions_star_wars$gender=="female"))) /
+length(genderPredictions_star_wars$gender) * 100,1),"%")
+paste0("Male: ",round(length(as.factor(
+which(genderPredictions_star_wars$gender=="male"))) /
+length(genderPredictions_star_wars$gender) * 100,1),"%")
+# now we apply these data to the network as a new attribute named `gender`
+temp <- match(firstNames,genderPredictions_star_wars$name)
+V(g_bimodal_facebook_star_wars)$gender <-
+genderPredictions_star_wars$gender[temp]
+V(g_bimodal_facebook_star_wars)$gender[
+is.na(V(g_bimodal_facebook_star_wars)$gender)] <- "unknown"
+
+
+write.graph(g_bimodal_facebook_star_wars,
+"FacebookBimodalNetwork_Star_Wars_GENDER.graphml",format="graphml")
+```
+
