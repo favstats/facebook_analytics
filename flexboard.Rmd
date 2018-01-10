@@ -1,5 +1,5 @@
 ---
-title: "Omar Saif Ghobash's Facebook Page Analytics (October 9th 2017 - January 7th 2018)"
+title: "Omar Saif Ghobash's Facebook Page Analytics (October 8th 2017 - January 6th 2018)"
 output: 
   flexdashboard::flex_dashboard:
     #storyboard: true
@@ -11,8 +11,7 @@ knitr::opts_chunk$set(echo=F, warning=FALSE, message=FALSE)
 #devtools::install_github("ropensci/plotly", force = T)
 #devtools::install_github("tidyverse/ggplot2", force = T)
 #pacman::p_install_gh("vosonlab/SocialMediaLab")
-pacman::p_load(tidyverse, magrittr, stringr, scales, lubridate, tidytext, tidyr, ggthemes, janitor, Rfacebook, plotly, SocialMediaLab, geojsonio, geojsonlint, highcharter, xts, knitr, kableExtra, formattable)
-
+pacman::p_load(tidyverse, magrittr, stringr, scales, lubridate, tidytext, tidyr, ggthemes, janitor, Rfacebook, plotly, DT, SocialMediaLab, geojsonio, geojsonlint, highcharter, xts, knitr, kableExtra, formattable)
 
 range01 <- function(x){(x - min(x, na.rm = T)) / (max(x, na.rm = T) - min(x, na.rm = T))}
 
@@ -62,11 +61,11 @@ if_else_replace <- function(variables) {
     } else {
         apply(x, dim.len, na.lomf.0)
     }
-}
-
+ }
+ 
 ```
 
-Report {data-icon="fa-user-circle-o"}
+Report {data-icon="fa-list"}
 =========================================
 
 Column {data-width=200}
@@ -83,6 +82,8 @@ $(document).ready(function(){
 ```{r}
 post_stats <- readr::read_csv("data/post_stats.csv") %>% 
   janitor::clean_names() 
+
+days <- 91
 
 posts <- post_stats %>% filter(!is.na(permalink)) %>% 
   nrow()
@@ -111,6 +112,12 @@ dscrs2 <- as.list(dailies[1,])
 labels <- c("Total Posts", 
             "Total Views Count", 
 as.character(dailies[1,])[-1] %>% str_replace("Daily: ", ""))
+
+n_lks <- dailies %>% 
+  filter(!is.na(date)) %>% 
+  select(daily_new_likes) %>% 
+  mutate_all(as.numeric) %>% 
+  sum(., na.rm = T)
 
 tab <- dailies %>% filter(!is.na(date)) %>% 
   select(-date) %>% 
@@ -282,23 +289,69 @@ gsub("<thead>.*</thead>", "", x)
 #post_stats %>% 
 #  filter(lifetime_post_stories == max(as.numeric(post_stats$lifetime_post_stories), na.rm = T)) %>% #select(permalink)
 
+post_likes <- sum(postings$likes_count)
+post_comments_count <- sum(postings$comments_count)
 ```
 
 <img src = "images/shares.png" width = "40%" align = "middle"> 
 </center>
 
 
+Row {data-width=180}
+-----------------------------------------------------------------------
+
+### New Page Likes per Day
+
+```{r}
+flexdashboard::valueBox(round(n_lks / days), icon = "fa-thumbs-o-up", color = "#2780e3")
+```
+
+### Engaged Users per Day
+
+```{r}
+flexdashboard::valueBox(round(22735 / days), icon = "fa-user", color = "#2780e3")
+```
+
+
+### Reached Users per Day
+
+```{r}
+flexdashboard::valueBox(round(185502 / days), icon = "fa-users", color = "#2780e3")
+```
 
 
 
+### Posts per Day
 
-Likes, Follows and Reach by Gender {data-icon="fa-lightbulb-o" data-navmenu="Audience Age and Gender"}
+```{r}
+
+flexdashboard::valueBox(round(posts / days), icon = "fa-pencil", color = "#2780e3")
+```
+
+### Likes per Post
+
+```{r}
+
+flexdashboard::valueBox(round(post_likes / posts), icon = "fa-thumbs-o-up", color = "#2780e3")
+```
+
+
+
+### Comments per Post
+
+```{r}
+flexdashboard::valueBox(round(post_comments_count / posts), icon = "fa-comments", color = "#2780e3")
+```
+
+
+
+Likes, Follows and Reach by Age and Gender {data-navmenu="Audience by Age and Gender"}
 =========================================
 
 Column {.tabset .tabset-fade}
 -------------------------------------
 
-### Total Page Likes
+###
 
 ```{r}
 
@@ -343,12 +396,12 @@ ggplot(aes(x=Age, y=Likes, fill=Gender)) +
   theme(legend.position="bottom") +
   ggthemes::theme_hc() +
   ggthemes::scale_fill_fivethirtyeight() +
-  ggtitle("Total Page Likes by Gender and Age (XXX on January 7th 2018)") +
+  ggtitle("Total Page Likes by Gender and Age") +
   xlab("Age Groups") +
   ylab("Likes") + 
   guides(fill=guide_legend(title="")) + coord_flip()
 
-  plotly::ggplotly(gg_plot, height = 760)  %>%
+  plotly::ggplotly(gg_plot, height = 735)  %>%
   layout(legend = list(x = 0.7, y = 0.9, font = list(size = 18)))
 
 
@@ -357,7 +410,7 @@ ggplot(aes(x=Age, y=Likes, fill=Gender)) +
 Column {.tabset .tabset-fade}
 -------------------------------------
 
-### Total Page Follows
+###
 
 ```{r}
 
@@ -402,12 +455,12 @@ ggplot(aes(x=Age, y=Follows, fill=Gender)) +
   theme(legend.position="bottom") +
   ggthemes::theme_hc() +
   ggthemes::scale_fill_fivethirtyeight() +
-  ggtitle("Total Page Follows by Gender and Age (XXX on January 7th 2018)") +
+  ggtitle("Total Page Follows by Gender and Age") +
   xlab("Age Groups") +
   ylab("Follows") + 
   guides(fill=guide_legend(title="")) + coord_flip()
 
-  plotly::ggplotly(gg_plot, height = 760)  %>%
+  plotly::ggplotly(gg_plot, height = 735)  %>%
   layout(legend = list(x = 0.7, y = 0.9, font = list(size = 18)))
 
 
@@ -416,7 +469,7 @@ ggplot(aes(x=Age, y=Follows, fill=Gender)) +
 Column {.tabset .tabset-fade}
 -------------------------------------
 
-### Total Reach of Facebook Page
+###
 
 ```{r}
 daily_reach_demos <- readr::read_csv("data/daily_reach_demos.csv") %>% janitor::clean_names()
@@ -461,12 +514,12 @@ ggplot(aes(x=Age, y=Reach, fill=Gender)) +
   theme(legend.position="bottom") +
   ggthemes::theme_hc() +
   ggthemes::scale_fill_fivethirtyeight() +
-  ggtitle("Page Reach by Gender and Age (XXX on January 7th 2018)") +
+  ggtitle("Page Reach by Gender and Age") +
   xlab("Age Groups") +
   ylab("Unique Users") + 
   guides(fill=guide_legend(title="")) + coord_flip()
 
-  plotly::ggplotly(gg_plot, height = 760)  %>%
+  plotly::ggplotly(gg_plot, height = 735)  %>%
   layout(legend = list(x = 0.7, y = 0.9, font = list(size = 18)))
 
 ```
@@ -507,7 +560,7 @@ highchart(type = "stock")  %>%
   ) %>% 
   hc_add_series(
   make_xts(like_offensive$lifetime_total_follows, like_offensive$date), 
-  name = "Total Follow", type = "area", color = "green"
+  name = "Total Follows", type = "area", color = "green"
   ) %>% 
 #  hc_add_series(
 #  make_xts(cumsum_reach$daily_viral_reach, cumsum_reach$date), 
@@ -602,21 +655,21 @@ Column {data-width=280}
 
 *Legend:*
 
-**(Daily) Total Reach**
+**(Daily) Total Likes**
 
-The number of people who have seen any content associated with your Page. (Unique Users)
+The number of people who have liked your Page (Total Count)
 
-**(Daily) Paid Reach**
+**(Daily) Total Unlikes**
 
-The number of people who saw a sponsored story or ad pointing to your Page. (Unique Users)
+The number of Unlikes of your Page (Total Count)
 
-**(Daily) Organic Reach**
+**(Daily) Total Follows**
 
-The number of people who visited your Page, or saw your Page or one of its posts in news feed or ticker. These can be people who have liked your Page and people who haven't. (Unique Users)
+The number of people who have liked your Page (Total Count)
 
-**(Daily) Viral Reach**
+**(Daily) Total Unfollows**
 
-The number of people who saw your Page or one of its posts from a story shared by a friend. These stories include liking your Page, posting to your Page's timeline, liking, commenting on or sharing one of your Page posts, answering a question you posted, responding to one of your events, mentioning your Page, tagging your Page in a photo or checking in at your location. (Unique Users)
+The number of Unlikes of your Page (Total Count)
 
 
 
@@ -800,12 +853,12 @@ impressives %<>%
 #  .[1,] %>% 
   gather() 
 
-colnames(impressives) <- c("Measure", "Total Number (October 9th 2017 - January 7th 2018)")
+colnames(impressives) <- c("Measure", "Total Number (October 8th 2017 - January 6th 2018)")
 
 knitr::kable(impressives)
 
 plot_dat <- impressives[-1,] %>% 
-  mutate(perc = round(`Total Number (October 9th 2017 - January 7th 2018)`/sum(`Total Number (October 9th 2017 - January 7th 2018)`)*100,2))
+  mutate(perc = round(`Total Number (October 8th 2017 - January 6th 2018)`/sum(`Total Number (October 8th 2017 - January 6th 2018)`)*100,2))
 
 
 
@@ -1078,12 +1131,12 @@ reaching %<>%
 #  .[1,] %>% 
   gather() 
 
-colnames(reaching) <- c("Measure", "Total Number (October 9th 2017 - January 7th 2018)")
+colnames(reaching) <- c("Measure", "Total Number (October 8th 2017 - January 6th 2018)")
 
 knitr::kable(reaching)
 
 plot_dat <- reaching[-1,] %>% 
-  mutate(perc = round(`Total Number (October 9th 2017 - January 7th 2018)`/sum(`Total Number (October 9th 2017 - January 7th 2018)`)*100,2))
+  mutate(perc = round(`Total Number (October 8th 2017 - January 6th 2018)`/sum(`Total Number (October 8th 2017 - January 6th 2018)`)*100,2))
 
 
 
@@ -1126,7 +1179,7 @@ plot_dat <- reaching[-1,] %>%
 ```
 
 
-Consumers and Consumption on Facebook Page  {data-navmenu="Page Impact"}
+Consumers and Consumption  {data-navmenu="Page Impact"}
 =========================================
 
 Column {.tabset .tabset-fade}
@@ -1155,11 +1208,11 @@ highchart(type = "stock")  %>%
   #hc_exporting(enabled = TRUE) 
   hc_add_series(
   make_xts(cumsums$daily_page_consumptions, cumsums$date), 
-  name = "Daily Page Consumptions", type = "area", color = "red"
+  name = "Total Page Consumptions", type = "area", color = "red"
   ) %>% 
   hc_add_series(
   make_xts(cumsums$daily_total_consumers, cumsums$date), 
-  name = "Daily Total Consumers", type = "area", color = "green"
+  name = "Total Consumers", type = "area", color = "green"
   ) %>% 
   hc_add_theme(hc_theme_smpl()) %>%
   hc_legend(enabled = T, align = "right", verticalAlign = "top",
@@ -1237,11 +1290,11 @@ Column {data-width=180}
 
 *Legend:*
 
-**Daily Page Consumptions**
+**(Daily) Page Consumptions**
 
 The number of clicks on any of your content. Stories generated without clicks on page content (e.g., liking the page in Timeline) are not included. (Total Count)
 
-**Daily Page Consumers**
+**(Daily) Page Consumers**
 
 The number of people who clicked on any of your content. Stories that are created without clicking on Page content (ex, liking the Page from timeline) are not included. (Unique Users)
 
@@ -1294,7 +1347,7 @@ highchart() %>%
   
 ```
 
-Engagement and Engaged Users on Facebook Page  {data-navmenu="Page Impact"}
+Engagement and Engaged Users  {data-navmenu="Page Impact"}
 =========================================
 
 Column {.tabset .tabset-fade}
@@ -1555,12 +1608,12 @@ viewing %<>%
 #  .[1,] %>% 
   gather() 
 
-colnames(viewing) <- c("Measure", "Total Number (October 9th 2017 - January 7th 2018)")
+colnames(viewing) <- c("Measure", "Total Number (October 8th 2017 - January 6th 2018)")
 
 knitr::kable(viewing)
 
 plot_dat <- viewing[-1,] %>% 
-  mutate(perc = round(`Total Number (October 9th 2017 - January 7th 2018)`/sum(`Total Number (October 9th 2017 - January 7th 2018)`)*100,2))
+  mutate(perc = round(`Total Number (October 8th 2017 - January 6th 2018)`/sum(`Total Number (October 8th 2017 - January 6th 2018)`)*100,2))
 
 
 
@@ -1690,9 +1743,7 @@ cntry_likes %<>%
   mutate(likes = as.numeric(likes)) %>% 
   mutate(iso3 = countrycode::countrycode(cntry, "country.name", "iso3c"))
 
-total <- cntry_likes %>% 
-  select(likes) %>% 
-  sum()
+total <- 10981 #cntry_likes %>% select(likes) %>% sum()
 
 cntry_likes %>% 
   select(iso3, likes) %>% 
@@ -1706,7 +1757,7 @@ cntry_likes %>%
   ) %>%
   highcharter::hc_colorAxis(stops = stops) %>%
   highcharter::hc_title(
-    text = paste0("Total Page Likes (",total, " on January 7th 2018)")
+    text = paste0("Total Page Likes (",total, " on January 6th 2018)")
   ) %>% 
   highcharter::hc_subtitle(text = "Based on Data from Omar Saif Ghobash's Facebook page.") %>%
 #  highcharter::hc_credits(enabled = TRUE, text = "Based on Data from Omar Saif Ghobash's Facebook page") %>% 
@@ -1714,7 +1765,10 @@ cntry_likes %>%
   highcharter::hc_mapNavigation(enabled = TRUE) %>% 
   hc_add_series(data = na.omit(city_likes), type = "mapbubble",
                 minSize = 0, maxSize = 30,
-                name = "City") 
+                name = "City") %>% 
+  hc_exporting(
+    enabled = TRUE
+  )
 
 
 
@@ -1788,9 +1842,7 @@ cntry_follows %<>%
   mutate(follows = as.numeric(follows)) %>% 
   mutate(iso3 = countrycode::countrycode(cntry, "country.name", "iso3c"))
 
-total <- cntry_follows %>% 
-  select(follows) %>% 
-  sum()
+total <- 11047 #cntry_follows %>% select(follows) %>%  sum()
 
 cntry_follows %>% 
   select(iso3, follows) %>% 
@@ -1804,7 +1856,7 @@ cntry_follows %>%
   ) %>%
   highcharter::hc_colorAxis(stops = stops) %>%
   highcharter::hc_title(
-    text = paste0("Total Page Follows (",total, " on January 7th 2018)")
+    text = paste0("Total Page Follows (",total, " on January 6th 2018)")
   ) %>% 
   highcharter::hc_subtitle(text = "Based on Data from Omar Saif Ghobash's Facebook page.") %>%
 #  highcharter::hc_credits(enabled = TRUE, text = "Based on Data from Omar Saif Ghobash's Facebook page") %>% 
@@ -1812,7 +1864,10 @@ cntry_follows %>%
   highcharter::hc_mapNavigation(enabled = TRUE) %>% 
   hc_add_series(data = na.omit(city_follows), type = "mapbubble",
                 minSize = 0, maxSize = 30,
-                name = "City") 
+                name = "City") %>% 
+  hc_exporting(
+    enabled = TRUE
+  ) 
 
 
 
@@ -1950,9 +2005,9 @@ city_daily_reach %>%
   ) %>%
   highcharter::hc_colorAxis(stops = stops) %>%
   highcharter::hc_title(
-    text = "Total Page Reach (October 9th 2017 - January 7th 2018)"
+    text = "Total Page Reach (October 8th 2017 - January 6th 2018)"
   ) %>% 
-  highcharter::hc_subtitle(text = "Based on Data from Omar Saif Ghobash's Facebook page. By user country in unique users (N = 185.502)") %>%
+  highcharter::hc_subtitle(text = "Based on Data from Omar Saif Ghobash's Facebook page. (Unique users (N = 185.502)") %>%
 #  highcharter::hc_credits(enabled = TRUE, text = "Based on Data from Omar Saif Ghobash's Facebook page") %>% 
   highcharter::hc_add_theme(highcharter::hc_theme_smpl()) %>% 
   highcharter::hc_mapNavigation(enabled = TRUE)  %>% 
@@ -1963,7 +2018,10 @@ city_daily_reach %>%
                                                      countryName)) %>% 
                                  select(name, lon, lat, z)), type = "mapbubble",
                 minSize = 0, maxSize = 30,
-                name = "City") 
+                name = "City") %>% 
+  hc_exporting(
+    enabled = TRUE
+  ) 
 
 
 
