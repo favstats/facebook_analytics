@@ -2007,7 +2007,7 @@ city_daily_reach %>%
   highcharter::hc_title(
     text = "Total Page Reach (October 8th 2017 - January 6th 2018)"
   ) %>% 
-  highcharter::hc_subtitle(text = "Based on Data from Omar Saif Ghobash's Facebook page. (Unique users (N = 185.502)") %>%
+  highcharter::hc_subtitle(text = "Based on Data from Omar Saif Ghobash's Facebook page. (Unique users: 185.502)") %>%
 #  highcharter::hc_credits(enabled = TRUE, text = "Based on Data from Omar Saif Ghobash's Facebook page") %>% 
   highcharter::hc_add_theme(highcharter::hc_theme_smpl()) %>% 
   highcharter::hc_mapNavigation(enabled = TRUE)  %>% 
