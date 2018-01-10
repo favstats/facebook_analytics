@@ -401,7 +401,7 @@ ggplot(aes(x=Age, y=Likes, fill=Gender)) +
   ylab("Likes") + 
   guides(fill=guide_legend(title="")) + coord_flip()
 
-  plotly::ggplotly(gg_plot, height = 735)  %>%
+  plotly::ggplotly(gg_plot, height = 635)  %>%
   layout(legend = list(x = 0.7, y = 0.9, font = list(size = 18)))
 
 
@@ -460,7 +460,7 @@ ggplot(aes(x=Age, y=Follows, fill=Gender)) +
   ylab("Follows") + 
   guides(fill=guide_legend(title="")) + coord_flip()
 
-  plotly::ggplotly(gg_plot, height = 735)  %>%
+  plotly::ggplotly(gg_plot, height = 635)  %>%
   layout(legend = list(x = 0.7, y = 0.9, font = list(size = 18)))
 
 
@@ -519,7 +519,7 @@ ggplot(aes(x=Age, y=Reach, fill=Gender)) +
   ylab("Unique Users") + 
   guides(fill=guide_legend(title="")) + coord_flip()
 
-  plotly::ggplotly(gg_plot, height = 735)  %>%
+  plotly::ggplotly(gg_plot, height = 635)  %>%
   layout(legend = list(x = 0.7, y = 0.9, font = list(size = 18)))
 
 ```
