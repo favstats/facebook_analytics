@@ -32,15 +32,14 @@ library(genderdata)
 ```
 
 ```{r}
-g_bimodal_facebook_star_wars <- Authenticate("Facebook", 
+Authenticate("Facebook", 
                                              appID = appID, 
                                              appSecret = appSecret) %>%
                       SaveCredential("FBCredential.RDS") %>%
                       Collect(pageName = "OmarSGhobash",
                               rangeFrom = "2017-10-09", 
                               rangeTo = "2018-01-08", 
-                              writeToFile = TRUE) %>%
-                      Create("Bimodal")
+                              writeToFile = TRUE)
 
 omar <- read_csv("2017-10-09_to_2018-01-08_OmarSGhobash_FacebookData.csv")
 View(omar)

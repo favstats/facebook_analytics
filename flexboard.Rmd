@@ -292,13 +292,13 @@ gsub("<thead>.*</thead>", "", x)
 
 
 
-Audience Age and Gender {data-icon="fa-lightbulb-o"}
+Likes, Follows and Reach by Gender {data-icon="fa-lightbulb-o" data-navmenu="Audience Age and Gender"}
 =========================================
 
-Row {.tabset .tabset-fade}
+Column {.tabset .tabset-fade}
 -------------------------------------
 
-### Likes by Gender and Age {data-commentary-width=560}
+### Total Page Likes
 
 ```{r}
 
@@ -315,146 +315,164 @@ colnames(agender_likes) <- c("date", agenders)
 agender_likes %<>% 
   filter(!is.na(date)) %>% 
   select(-u_13_17, -u_25_34, -u_35_44, -u_45_54, -u_55_64, -u_u_65) %>% 
-  gather("agender", "likes", -date) 
+  gather("agender", "Likes", -date) 
 
 genders <- agender_likes$agender %>% str_split("_") %>% 
   as.data.frame %>% janitor::clean_names()
 
-agender_likes$gender <- as.character(as_vector(genders[1,]))
-agender_likes$age <- paste0(as.character(as_vector(genders[2,])), "-", as.character(as_vector(genders[3,])))
+agender_likes$Gender <- as.character(as_vector(genders[1,]))
+agender_likes$Age <- paste0(as.character(as_vector(genders[2,])), "-", as.character(as_vector(genders[3,])))
 
 
 
-agender_likes %>%
-  mutate(age = case_when(
-    age == "f-65" ~ "65+",
-    age == "m-65" ~ "65+",
-    TRUE ~ as.character(age)
+gg_dat <- agender_likes %>%
+  mutate(Age = case_when(
+    Age == "f-65" ~ "65+",
+    Age == "m-65" ~ "65+",
+    TRUE ~ as.character(Age)
   )) %>% 
-  mutate(likes = as.numeric(likes)) %>% 
-  mutate(likes = ifelse(gender == "f", -likes, likes)) %>% 
-  mutate(gender = fct_rev(factor(gender))) %>% 
-ggplot(aes(x=age, y=likes, fill=gender)) + 
-  geom_bar(stat="identity", position="identity", aes(x=age, y=likes, fill=gender)) + 
+  mutate(Likes = as.numeric(Likes)) %>% 
+  mutate(Likes = ifelse(Gender == "f", -Likes, Likes)) %>% 
+  mutate(Gender = ifelse(Gender == "f", "Female", "Male")) %>% 
+  mutate(Gender = fct_rev(factor(Gender))) 
+
+gg_plot <- gg_dat %>% 
+ggplot(aes(x=Age, y=Likes, fill=Gender)) + 
+  geom_bar(stat="identity", position="identity", aes(x=Age, y=Likes, fill=Gender)) + 
   geom_bar(stat="identity", position="identity") + 
+  theme(legend.position="bottom") +
   ggthemes::theme_hc() +
-  ggthemes::scale_fill_fivethirtyeight()
-  plotly::ggplotly()
+  ggthemes::scale_fill_fivethirtyeight() +
+  ggtitle("Total Page Likes by Gender and Age (XXX on January 7th 2018)") +
+  xlab("Age Groups") +
+  ylab("Likes") + 
+  guides(fill=guide_legend(title="")) + coord_flip()
+
+  plotly::ggplotly(gg_plot, height = 760)  %>%
+  layout(legend = list(x = 0.7, y = 0.9, font = list(size = 18)))
 
 
 ```
 
+Column {.tabset .tabset-fade}
+-------------------------------------
 
-### Chart B {data-commentary-width=560}
+### Total Page Follows
 
 ```{r}
 
-numextract <- function(string){ 
-  str_extract(string, "\\-*\\d+\\.*\\d*")
-} 
+agender_follows <- readr::read_csv("data/agender_follows.csv") %>% janitor::clean_names()
 
-total_frequency <- readr::read_csv("data/total_frequency.csv") %>% janitor::clean_names()
+agenders <- colnames(agender_follows)[-1] %>% str_extract(".......$") 
 
-describes  <- as.list(total_frequency[1,])
+agenders[7] <- "f_f_65"
+agenders[14] <- "m_m_65"
+agenders[20] <- "u_u_65"
 
-total_frequency %<>% filter(!is.na(date)) %>% 
-  select(-date) %>% 
-  mutate_all(funs(as.numeric)) %>% 
-  cbind(total_frequency %>% filter(!is.na(date)) %>% select(date), .) 
+colnames(agender_follows) <- c("date", agenders)
 
-# total_frequency %>% 
-#   gather("distrib", "freq", -date) %>% 
-#   mutate(distrib = numextract(distrib)) %>% 
-#   mutate(distrib = case_when(
-#     distrib == "6" ~ "6-10",
-#     distrib == "11" ~ "11-20",
-#     distrib == "21" ~ "21+",
-#     TRUE ~ distrib
-#   )) #%>% 
-# #  group_by(distrib) %>% 
-# #  summarise(freq = sum(freq, na.rm = T))
+agender_follows %<>% 
+  filter(!is.na(date)) %>% 
+  select(-u_13_17, -u_25_34, -u_35_44, -u_45_54, -u_55_64, -u_u_65) %>% 
+  gather("agender", "Follows", -date) 
+
+genders <- agender_follows$agender %>% str_split("_") %>% 
+  as.data.frame %>% janitor::clean_names()
+
+agender_follows$Gender <- as.character(as_vector(genders[1,]))
+agender_follows$Age <- paste0(as.character(as_vector(genders[2,])), "-", as.character(as_vector(genders[3,])))
 
 
-highchart() %>% 
-  hc_chart(type = "area") %>% 
-  hc_title(text = "Unique users reached by how many times they saw any page content") %>% 
-#  hc_subtitle(text = "Source: Wikipedia.org") %>% 
-  hc_xAxis(categories = total_frequency$date,
-           tickmarkPlacement = "on",
-           title = list(enabled = FALSE)) %>% 
-  hc_yAxis(title = list(text = "Percent")) %>% 
-  hc_tooltip(pointFormat = "<span style=\"color:{series.color}\">{series.name}</span>:
-             <b>{point.percentage:.1f}%</b> ({point.y:,.0f})<br/>",
-             shared = TRUE) %>% 
-  hc_plotOptions(area = list(
-     stacking = "percent",
-     lineColor = "black",
-     lineWidth = 0.1,
-     marker = list(
-       lineWidth = 0.1,
-       lineColor = "black"
-       ))
-     ) %>% 
-  hc_add_series(name = "1 View", data = total_frequency$daily_total_frequency_distribution_1) %>% 
-  hc_add_series(name = "2 Views", data = total_frequency$daily_total_frequency_distribution_2) %>%
-  hc_add_series(name = "3 Views", data = total_frequency$daily_total_frequency_distribution_3) %>% 
-  hc_add_series(name = "4 Views", data = total_frequency$daily_total_frequency_distribution_4) %>% 
-  hc_add_series(name = "5 Views", data = total_frequency$daily_total_frequency_distribution_5) %>%  
-  hc_add_series(name = "6-10 Views", data = total_frequency$daily_total_frequency_distribution_6_10) %>% 
-  hc_add_series(name = "11-20 Views", data = total_frequency$daily_total_frequency_distribution_11_20) %>% 
-  hc_add_series(name = "+21 Views", data = total_frequency$daily_total_frequency_distribution_21) %>% 
-  hc_add_theme(hc_theme_smpl())
-       
+
+gg_dat <- agender_follows %>%
+  mutate(Age = case_when(
+    Age == "f-65" ~ "65+",
+    Age == "m-65" ~ "65+",
+    TRUE ~ as.character(Age)
+  )) %>% 
+  mutate(Follows = as.numeric(Follows)) %>% 
+  mutate(Follows = ifelse(Gender == "f", -Follows, Follows)) %>% 
+  mutate(Gender = ifelse(Gender == "f", "Female", "Male")) %>% 
+  mutate(Gender = fct_rev(factor(Gender))) 
+
+gg_plot <- gg_dat %>% 
+ggplot(aes(x=Age, y=Follows, fill=Gender)) + 
+  geom_bar(stat="identity", position="identity", aes(x=Age, y=Follows, fill=Gender)) + 
+  geom_bar(stat="identity", position="identity") + 
+  theme(legend.position="bottom") +
+  ggthemes::theme_hc() +
+  ggthemes::scale_fill_fivethirtyeight() +
+  ggtitle("Total Page Follows by Gender and Age (XXX on January 7th 2018)") +
+  xlab("Age Groups") +
+  ylab("Follows") + 
+  guides(fill=guide_legend(title="")) + coord_flip()
+
+  plotly::ggplotly(gg_plot, height = 760)  %>%
+  layout(legend = list(x = 0.7, y = 0.9, font = list(size = 18)))
+
 
 ```
 
-### Chart C {data-commentary-width=560}
+Column {.tabset .tabset-fade}
+-------------------------------------
+
+### Total Reach of Facebook Page
 
 ```{r}
-prc_chart <- total_frequency %>% 
-  mutate_if(.predicate = is.numeric, .funs = if_else_replace) %>% 
-  mutate_if(.predicate = is.numeric, .funs = cumsum) %>% 
-  .[nrow(total_frequency),]
-#  mutate(distrib = case_when(
-#    distrib == "6" ~ "6-10",
-#    distrib == "11" ~ "11-20",
-#    distrib == "21" ~ "21+",
-#    TRUE ~ distrib
-#  )) #%>% 
-#  group_by(distrib) %>% 
-#  summarise(freq = sum(freq, na.rm = T))
+daily_reach_demos <- readr::read_csv("data/daily_reach_demos.csv") %>% janitor::clean_names()
 
-highchart() %>%
-    hc_xAxis(categories = "%",
-             title = "Percentages") %>% 
-    hc_add_series(data = prc_chart$daily_total_frequency_distribution_1,
-                  name = "1 View") %>%   
-    hc_add_series(data = prc_chart$daily_total_frequency_distribution_2,
-                  name = "2 Views") %>%  
-    hc_add_series(data = prc_chart$aily_total_frequency_distribution_3,
-                  name = "3 Views") %>%    
-    hc_add_series(data = prc_chart$daily_total_frequency_distribution_4,
-                  name = "4 Views") %>% 
-    hc_add_series(data = prc_chart$daily_total_frequency_distribution_5,
-                  name = "5 Views") %>% 
-    hc_add_series(data = prc_chart$daily_total_frequency_distribution_6_10,
-                  name = "6-10 Views") %>% 
-    hc_add_series(data = prc_chart$daily_total_frequency_distribution_11_20,
-                  name = "11-20 Views") %>% 
-    hc_add_series(data = prc_chart$daily_total_frequency_distribution_21,
-                  name = "+21 Views") %>% 
-    hc_chart(type = "bar") %>%
-    hc_plotOptions(series = list(stacking = "percent")) %>%
-    hc_tooltip(pointFormat = "<span style=\"color:{series.color}\">{series.name}</span>:
-             <b>{point.percentage:.1f}%</b> ({point.y:,.0f})<br/>") %>% 
-    hc_yAxis(title = list(text = "Percentage")) %>%
-#    hc_legend(reversed = TRUE) %>% 
-    hc_add_theme(hc_theme_smpl()) %>% 
-    hc_size(300, 200)  %>%
-    hc_legend(enabled = T, align = "center", verticalAlign = "bottom",
-              layout = "horizontal"
- )
+
+agenders <- colnames(daily_reach_demos)[-1] %>% str_extract(".......$") 
+
+agenders[7] <- "f_f_65"
+agenders[14] <- "m_m_65"
+agenders[20] <- "u_u_65"
+
+colnames(daily_reach_demos) <- c("date", agenders)
+
+daily_reach_demos %<>% 
+  filter(!is.na(date)) %>% 
+  select(-u_13_17, -u_18_24, -u_25_34, -u_35_44, -u_45_54, -cs_u_65, -u_u_65) %>% 
+  gather("agender", "Reach", -date) 
+
+genders <- daily_reach_demos$agender %>% str_split("_") %>% 
+  as.data.frame %>% janitor::clean_names()
+
+daily_reach_demos$Gender <- as.character(as_vector(genders[1,]))
+daily_reach_demos$Age <- paste0(as.character(as_vector(genders[2,])), "-", as.character(as_vector(genders[3,])))
+
+
+
+gg_dat <- daily_reach_demos %>%
+  mutate(Age = case_when(
+    Age == "f-65" ~ "65+",
+    Age == "m-65" ~ "65+",
+    TRUE ~ as.character(Age)
+  )) %>% 
+  mutate(Reach = as.numeric(Reach)) %>% 
+  mutate(Reach = ifelse(Gender == "f", -Reach, Reach)) %>% 
+  mutate(Gender = ifelse(Gender == "f", "Female", "Male")) %>% 
+  mutate(Gender = fct_rev(factor(Gender))) 
+
+gg_plot <- gg_dat %>% 
+ggplot(aes(x=Age, y=Reach, fill=Gender)) + 
+  geom_bar(stat="identity", position="identity", aes(x=Age, y=Reach, fill=Gender)) + 
+  geom_bar(stat="identity", position="identity") + 
+  theme(legend.position="bottom") +
+  ggthemes::theme_hc() +
+  ggthemes::scale_fill_fivethirtyeight() +
+  ggtitle("Page Reach by Gender and Age (XXX on January 7th 2018)") +
+  xlab("Age Groups") +
+  ylab("Unique Users") + 
+  guides(fill=guide_legend(title="")) + coord_flip()
+
+  plotly::ggplotly(gg_plot, height = 760)  %>%
+  layout(legend = list(x = 0.7, y = 0.9, font = list(size = 18)))
+
 ```
+
+
+
 
 
 Facebook Page Likes {data-navmenu="Page Impact"}
@@ -682,53 +700,7 @@ highchart(type = "stock")  %>%
 
 ### Daily - Impressions of Facebook Page
 
-```{r, eval = F}
-pages <- readr::read_csv("data/pages.csv") %>% janitor::clean_names()
 
-dscrs2 <- as.list(pages[1,])
-
-pages %<>% filter(!is.na(date)) %>% 
-  select(-date) %>% 
-  mutate_all(funs(as.numeric)) %>% 
-  cbind(pages %>% filter(!is.na(date)) %>% select(date), .)
-
-
-
-highchart() %>% 
-  hc_xAxis(categories = lubridate::as_date(pages$date)) %>% 
-  hc_add_series(name = "Daily Page Stories", data = pages$daily_page_stories, color = "red") %>% 
-  hc_add_series(name = "Daily Total Impressions", data = pages$daily_total_impressions, color = "red") %>% 
-  hc_add_series(name = "Daily Total Reach", data = pages$daily_total_reach, color = "red") %>% 
-  hc_add_series(name = "Daily Total Consumers", data = pages$daily_total_consumers, color = "red") %>% 
-  hc_add_series(name = "Daily Page Consumptions", data = pages$daily_page_consumptions) %>% 
-  hc_add_series(name = "Daily Post Engagements", data = pages$daily_post_engagements) %>%
-  hc_add_series(name = "Daily Page Engaged Users", data = pages$daily_page_engaged_users) %>%
-  hc_add_series(name = "Daily New Likes", data = pages$daily_new_likes) %>%
-  hc_add_series(name = "Daily Unlikes", data = pages$daily_unlikes) %>%
-  hc_add_series(name = "Daily New Follows", data = pages$daily_new_follows) %>%
-  hc_add_series(name = "Daily Total Video Views", data = pages$daily_new_follows) %>%
-  hc_add_theme(hc_theme_smpl()) %>%
-  hc_legend(align = "right", verticalAlign = "top",
-            layout = "vertical", x = -40, y = 80, 
-            floating = T, itemStyle = list(
-            color = 'black',
-            fontSize = "13px"
-   )) #%>% 
-#  hc_rangeSelector(enabled = T, buttons = list(
-#    list(type = 'all', text = 'All'),
-#    list(type = 'month', count = 1, text = 'Month'),
-#    list(type = 'week', count = 2, text = '2 Weeks'),
-#    list(type = 'week', count = 1, text = '1 Week'),
-#    list(type = 'day', count = 3, text = '3 Days')
-#  ))
-
-
-# highchart() %>% 
-#   hc_chart(type = "line") %>% 
-#   hc_add_series_df_tidy(data = dat, group = grp, values = value)
-
-  
-```
 
 ```{r}
 
@@ -1154,7 +1126,286 @@ plot_dat <- reaching[-1,] %>%
 ```
 
 
+Consumers and Consumption on Facebook Page  {data-navmenu="Page Impact"}
+=========================================
 
+Column {.tabset .tabset-fade}
+-------------------------------------
+
+### Total - Consumers and Consumption on Facebook Page
+
+```{r}
+pages <- readr::read_csv("data/pages.csv") %>% janitor::clean_names()
+
+dscrs2 <- as.list(pages[1,])
+
+pages %<>% filter(!is.na(date)) %>% 
+  select(-date) %>% 
+  mutate_all(funs(as.numeric)) %>% 
+  cbind(pages %>% filter(!is.na(date)) %>% select(date), .)
+
+cumsums <- pages %>% 
+  mutate_if(.predicate = is.numeric, .funs = if_else_replace) %>% 
+  mutate_if(.predicate = is.numeric, .funs = cumsum)
+
+
+highchart(type = "stock")  %>%
+  #hc_add_series(sent_total, color = "blue") %>% 
+  #hc_credits(enabled = TRUE) %>%
+  #hc_exporting(enabled = TRUE) 
+  hc_add_series(
+  make_xts(cumsums$daily_page_consumptions, cumsums$date), 
+  name = "Daily Page Consumptions", type = "area", color = "red"
+  ) %>% 
+  hc_add_series(
+  make_xts(cumsums$daily_total_consumers, cumsums$date), 
+  name = "Daily Total Consumers", type = "area", color = "green"
+  ) %>% 
+  hc_add_theme(hc_theme_smpl()) %>%
+  hc_legend(enabled = T, align = "right", verticalAlign = "top",
+            layout = "vertical", x = -50, y = 30, 
+            floating = T, itemStyle = list(
+            color = 'black',
+            fontSize = "13px"
+   )) %>% 
+  hc_rangeSelector(enabled = T, buttons = list(
+    list(type = 'all', text = 'All'),
+    list(type = 'month', count = 3, text = '3M'),
+    list(type = 'month', count = 2, text = '2M'),
+    list(type = 'month', count = 1, text = '1M'),
+    list(type = 'week', count = 2, text = '2Wks'),
+    list(type = 'week', count = 1, text = '1Wk')
+  )) %>% 
+  hc_exporting(
+    enabled = TRUE
+  ) %>% 
+  hc_plotOptions(area = list(
+    stacking = "normal",
+    lineColor = "#666666",
+    lineWidth = 1,
+    marker = list(
+      lineWidth = 1,
+      lineColor = "666666"
+    )
+  ))
+
+
+```
+
+### Daily - Consumers and Consumption on Facebook Page
+
+```{r}
+
+highchart(type = "stock")  %>%
+  #hc_add_series(sent_total, color = "blue") %>% 
+  #hc_credits(enabled = TRUE) %>%
+  #hc_exporting(enabled = TRUE) 
+  hc_add_series(
+  make_xts(pages$daily_page_consumptions, pages$date), 
+  name = "Daily Page Consumptions", type = "line", color = "red"
+  ) %>% 
+  hc_add_series(
+  make_xts(pages$daily_total_consumers, pages$date), 
+  name = "Daily Total Consumers", type = "area", color = "green"
+  ) %>% 
+  hc_add_theme(hc_theme_smpl()) %>%
+  hc_legend(enabled = T, align = "right", verticalAlign = "top",
+            layout = "vertical", x = -50, y = 30, 
+            floating = T, itemStyle = list(
+            color = 'black',
+            fontSize = "13px"
+   )) %>% 
+  hc_rangeSelector(enabled = T, buttons = list(
+    list(type = 'all', text = 'All'),
+    list(type = 'month', count = 3, text = '3M'),
+    list(type = 'month', count = 2, text = '2M'),
+    list(type = 'month', count = 1, text = '1M'),
+    list(type = 'week', count = 2, text = '2Wks'),
+    list(type = 'week', count = 1, text = '1Wk')
+  )) %>% 
+  hc_exporting(
+    enabled = TRUE
+  )
+```
+
+Column {data-width=180}
+-------------------------------------
+
+### Descriptives
+
+*Click on the Names in the Legend to enable/disable their visualization in the chart*
+
+*Legend:*
+
+**Daily Page Consumptions**
+
+The number of clicks on any of your content. Stories generated without clicks on page content (e.g., liking the page in Timeline) are not included. (Total Count)
+
+**Daily Page Consumers**
+
+The number of people who clicked on any of your content. Stories that are created without clicking on Page content (ex, liking the Page from timeline) are not included. (Unique Users)
+
+
+```{r, eval = F}
+pages <- readr::read_csv("data/pages.csv") %>% janitor::clean_names()
+
+dscrs2 <- as.list(pages[1,])
+
+pages %<>% filter(!is.na(date)) %>% 
+  select(-date) %>% 
+  mutate_all(funs(as.numeric)) %>% 
+  cbind(pages %>% filter(!is.na(date)) %>% select(date), .)
+
+
+
+highchart() %>% 
+  hc_xAxis(categories = lubridate::as_date(pages$date)) %>% 
+  hc_add_series(name = "Daily Page Stories", data = pages$daily_page_stories, color = "red") %>% 
+  hc_add_series(name = "Daily Total Impressions", data = pages$daily_total_impressions, color = "red") %>% 
+  hc_add_series(name = "Daily Total Reach", data = pages$daily_total_reach, color = "red") %>% 
+  hc_add_series(name = "Daily Total Consumers", data = pages$daily_total_consumers, color = "red") %>% 
+  hc_add_series(name = "Daily Page Consumptions", data = pages$daily_page_consumptions) %>% 
+  hc_add_series(name = "Daily Post Engagements", data = pages$daily_post_engagements) %>%
+  hc_add_series(name = "Daily Page Engaged Users", data = pages$daily_page_engaged_users) %>%
+  hc_add_series(name = "Daily New Likes", data = pages$daily_new_likes) %>%
+  hc_add_series(name = "Daily Unlikes", data = pages$daily_unlikes) %>%
+  hc_add_series(name = "Daily New Follows", data = pages$daily_new_follows) %>%
+  hc_add_series(name = "Daily Total Video Views", data = pages$daily_new_follows) %>%
+  hc_add_theme(hc_theme_smpl()) %>%
+  hc_legend(align = "right", verticalAlign = "top",
+            layout = "vertical", x = -40, y = 80, 
+            floating = T, itemStyle = list(
+            color = 'black',
+            fontSize = "13px"
+   )) #%>% 
+#  hc_rangeSelector(enabled = T, buttons = list(
+#    list(type = 'all', text = 'All'),
+#    list(type = 'month', count = 1, text = 'Month'),
+#    list(type = 'week', count = 2, text = '2 Weeks'),
+#    list(type = 'week', count = 1, text = '1 Week'),
+#    list(type = 'day', count = 3, text = '3 Days')
+#  ))
+
+
+# highchart() %>% 
+#   hc_chart(type = "line") %>% 
+#   hc_add_series_df_tidy(data = dat, group = grp, values = value)
+
+  
+```
+
+Engagement and Engaged Users on Facebook Page  {data-navmenu="Page Impact"}
+=========================================
+
+Column {.tabset .tabset-fade}
+-------------------------------------
+
+### Total - Engagement and Engaged Users on Facebook Page
+
+```{r}
+
+
+dscrs2 <- as.list(pages[1,])
+
+
+
+
+highchart(type = "stock")  %>%
+  #hc_add_series(sent_total, color = "blue") %>% 
+  #hc_credits(enabled = TRUE) %>%
+  #hc_exporting(enabled = TRUE) 
+  hc_add_series(
+  make_xts(cumsums$daily_post_engagements, cumsums$date), 
+  name = "Page Engagement", type = "area", color = "red"
+  ) %>% 
+  hc_add_series(
+  make_xts(cumsums$daily_page_engaged_users, cumsums$date), 
+  name = "Total Engagers", type = "area", color = "green"
+  ) %>% 
+  hc_add_theme(hc_theme_smpl()) %>%
+  hc_legend(enabled = T, align = "right", verticalAlign = "top",
+            layout = "vertical", x = -50, y = 30, 
+            floating = T, itemStyle = list(
+            color = 'black',
+            fontSize = "13px"
+   )) %>% 
+  hc_rangeSelector(enabled = T, buttons = list(
+    list(type = 'all', text = 'All'),
+    list(type = 'month', count = 3, text = '3M'),
+    list(type = 'month', count = 2, text = '2M'),
+    list(type = 'month', count = 1, text = '1M'),
+    list(type = 'week', count = 2, text = '2Wks'),
+    list(type = 'week', count = 1, text = '1Wk')
+  )) %>% 
+  hc_exporting(
+    enabled = TRUE
+  ) %>% 
+  hc_plotOptions(area = list(
+    stacking = "normal",
+    lineColor = "#666666",
+    lineWidth = 1,
+    marker = list(
+      lineWidth = 1,
+      lineColor = "666666"
+    )
+  ))
+
+
+
+```
+
+### Daily - Engagement and Engaged Users on Facebook Page
+
+```{r}
+
+highchart(type = "stock")  %>%
+  #hc_add_series(sent_total, color = "blue") %>% 
+  #hc_credits(enabled = TRUE) %>%
+  #hc_exporting(enabled = TRUE) 
+  hc_add_series(
+  make_xts(pages$daily_post_engagements, pages$date), 
+  name = "Page Engagement", type = "line", color = "red"
+  ) %>% 
+  hc_add_series(
+  make_xts(pages$daily_page_engaged_users, pages$date), 
+  name = "Total Engagers", type = "area", color = "green"
+  ) %>% 
+  hc_add_theme(hc_theme_smpl()) %>%
+  hc_legend(enabled = T, align = "right", verticalAlign = "top",
+            layout = "vertical", x = -50, y = 30, 
+            floating = T, itemStyle = list(
+            color = 'black',
+            fontSize = "13px"
+   )) %>% 
+  hc_rangeSelector(enabled = T, buttons = list(
+    list(type = 'all', text = 'All'),
+    list(type = 'month', count = 3, text = '3M'),
+    list(type = 'month', count = 2, text = '2M'),
+    list(type = 'month', count = 1, text = '1M'),
+    list(type = 'week', count = 2, text = '2Wks'),
+    list(type = 'week', count = 1, text = '1Wk')
+  )) %>% 
+  hc_exporting(
+    enabled = TRUE
+  )
+```
+
+Column {data-width=180}
+-------------------------------------
+
+### Descriptives
+
+*Click on the Names in the Legend to enable/disable their visualization in the chart*
+
+*Legend:*
+
+**(Daily) Page Engagement**
+
+The number of times people have engaged with your posts through like, comments and shares and more.
+
+**(Daily) Page Engaged Users**
+
+The number of people who engaged with your Page. Engagement includes any click or story created. (Unique Users).
 
 
 Video Views on Facebook Page  {data-navmenu="Page Impact"}
@@ -1163,9 +1414,10 @@ Video Views on Facebook Page  {data-navmenu="Page Impact"}
 Column {.tabset .tabset-fade}
 -------------------------------------
 
-### Daily - Video Views on Facebook Page
+### Total - Video Views on Facebook Page
 
-```{r, eval = F}
+```{r}
+
 videos_views <- readr::read_csv("data/videos_views.csv") %>% janitor::clean_names()
 
 descriptives <- as.list(videos_views[1,])
@@ -1175,52 +1427,7 @@ videos_views %<>% filter(!is.na(date)) %>%
   mutate_all(funs(as.numeric)) %>% 
   cbind(reach %>% filter(!is.na(date)) %>% select(date), .)
 
-highchart(type = "stock")  %>%
-  #hc_add_series(sent_total, color = "blue") %>% 
-  #hc_credits(enabled = TRUE) %>%
-  #hc_exporting(enabled = TRUE) 
-  hc_add_series(
-  make_xts(reach$daily_total_reach, reach$date), 
-  name = "Daily Total Reach", type = "line", color = "darkblue"
-  ) %>% 
-  hc_add_series(
-  make_xts(reach$daily_paid_reach, reach$date), 
-  name = "Daily Paid Reach", type = "line", color = "red"
-  ) %>% 
-  hc_add_series(
-  make_xts(reach$daily_organic_reach, reach$date), 
-  name = "Daily Organic Reach", type = "line", color = "green"
-  ) %>% 
-  hc_add_series(
-  make_xts(reach$daily_viral_reach, reach$date), 
-  name = "Daily Viral Reach", type = "line", color = "grey"
-  )    %>%
-  hc_add_theme(hc_theme_smpl()) %>%
-  hc_legend(enabled = T, align = "right", verticalAlign = "top",
-            layout = "vertical", x = -50, y = 30, 
-            floating = T, itemStyle = list(
-            color = 'black',
-            fontSize = "13px"
-   )) %>% 
-  hc_rangeSelector(enabled = T, buttons = list(
-    list(type = 'all', text = 'All'),
-    list(type = 'month', count = 3, text = '3M'),
-    list(type = 'month', count = 2, text = '2M'),
-    list(type = 'month', count = 1, text = '1M'),
-    list(type = 'week', count = 2, text = '2Wks'),
-    list(type = 'week', count = 1, text = '1Wk')
-  )) %>% 
-  hc_exporting(
-    enabled = TRUE
-  )
-
-```
-
-### Total - Video Views on Facebook Page
-
-```{r, eval = F}
-
-cumsum_reach <- reach %>% 
+cumsum_video <- videos_views %>% 
   mutate_if(.predicate = is.numeric, .funs = if_else_replace) %>% 
   mutate_if(.predicate = is.numeric, .funs = cumsum)
 
@@ -1234,16 +1441,12 @@ highchart(type = "stock")  %>%
 #  name = "Total Reach", type = "line", color = "darkblue"
 #  ) %>% 
   hc_add_series(
-  make_xts(cumsum_reach$daily_paid_reach, cumsum_reach$date), 
-  name = "Total Paid Reach", type = "area", color = "red"
+  make_xts(cumsum_video$daily_total_promoted_views, cumsum_video$date), 
+  name = "Total Promoted Video Views", type = "area", color = "red"
   ) %>% 
   hc_add_series(
-  make_xts(cumsum_reach$daily_organic_reach, cumsum_reach$date), 
-  name = "Total Organic Reach", type = "area", color = "green"
-  ) %>% 
-  hc_add_series(
-  make_xts(cumsum_reach$daily_viral_reach, cumsum_reach$date), 
-  name = "Total Viral Reach", type = "area", color = "grey"
+  make_xts(cumsum_video$daily_total_organic_views, cumsum_video$date), 
+  name = "Total Organic Video Views", type = "area", color = "green"
   )    %>%
   hc_add_theme(hc_theme_smpl()) %>%
   hc_legend(enabled = T, align = "right", verticalAlign = "top",
@@ -1277,129 +1480,27 @@ highchart(type = "stock")  %>%
 
 ```
 
-Column {data-width=280}
--------------------------------------
+### Daily - Video Views on Facebook Page
 
-### Descriptives
+```{r}
 
-*Click on the Names in the Legend to enable/disable their visualization in the chart*
-
-*Legend:*
-
-**(Daily) Total Reach**
-
-The number of people who have seen any content associated with your Page. (Unique Users)
-
-**(Daily) Paid Reach**
-
-The number of people who saw a sponsored story or ad pointing to your Page. (Unique Users)
-
-**(Daily) Organic Reach**
-
-The number of people who visited your Page, or saw your Page or one of its posts in news feed or ticker. These can be people who have liked your Page and people who haven't. (Unique Users)
-
-**(Daily) Viral Reach**
-
-The number of people who saw your Page or one of its posts from a story shared by a friend. These stories include liking your Page, posting to your Page's timeline, liking, commenting on or sharing one of your Page posts, answering a question you posted, responding to one of your events, mentioning your Page, tagging your Page in a photo or checking in at your location. (Unique Users)
-
-```{r, eval = F}
-reaching <- cumsum_reach %>% 
-   .[nrow(cumsum_reach),2:5]
-
-colnames(reaching) <- c("Total Reach", "Total Paid Reach", "Total Organic Reach", "Total Viral Reach")
-
-reaching %<>% 
-#  .[1,] %>% 
-  gather() 
-
-colnames(reaching) <- c("Measure", "Total Number (October 9th 2017 - January 7th 2018)")
-
-knitr::kable(reaching)
-
-plot_dat <- reaching[-1,] %>% 
-  mutate(perc = round(`Total Number (October 9th 2017 - January 7th 2018)`/sum(`Total Number (October 9th 2017 - January 7th 2018)`)*100,2))
-
-
-
-#pos <- c(2, 23, 66) + 5
-
-#cumsum(plot_dat$perc) - (0.5 * plot_dat$perc) - 20
-  
- ax <- list(
-   title = "",
-   zeroline = FALSE,
-   showline = FALSE,
-   showticklabels = FALSE,
-   showgrid = FALSE
- )
- 
- m <- list(
-   l = 10,
-   r = 10,
-   b = 20,
-   t = 30,
-   pad = 0
- )
- 
- plotly::plot_ly(plot_dat, 
-                 x = ~perc, 
-                 y = ~1, 
-                 orientation = 'h', 
-                 type = 'bar',
-                 color = ~Measure,
-                 text = ~perc, 
-                 hoverinfo = 'text') %>% 
- plotly::layout(legend = 
-                  list(orientation = 'v'),
-                title = "Percentage (%)",
-                xaxis = 
-                  list(title = ''),
-                yaxis = ax,
-                barmode = "stack", 
-                autosize = F, width = 600, height = 130, margin = m) 
-```
-
-
-
-
-Page Views of Facebook Page  {data-navmenu="Page Impact"}
-=========================================
-
-Column {.tabset .tabset-fade}
--------------------------------------
-
-### Daily - Page Views of Facebook Page
-
-```{r, eval = F}
-page_views <- readr::read_csv("data/page_views.csv") %>% janitor::clean_names()
-
-descriptives <- as.list(page_views[1,])
-
-videos_views %<>% filter(!is.na(date)) %>% 
-  select(-date) %>% 
-  mutate_all(funs(as.numeric)) %>% 
-  cbind(reach %>% filter(!is.na(date)) %>% select(date), .)
 
 highchart(type = "stock")  %>%
   #hc_add_series(sent_total, color = "blue") %>% 
   #hc_credits(enabled = TRUE) %>%
   #hc_exporting(enabled = TRUE) 
   hc_add_series(
-  make_xts(reach$daily_total_reach, reach$date), 
-  name = "Daily Total Reach", type = "line", color = "darkblue"
+  make_xts(videos_views$daily_total_video_views, videos_views$date), 
+  name = "Daily Total Views", type = "line", color = "darkblue"
   ) %>% 
   hc_add_series(
-  make_xts(reach$daily_paid_reach, reach$date), 
-  name = "Daily Paid Reach", type = "line", color = "red"
+  make_xts(videos_views$daily_total_promoted_views, videos_views$date), 
+  name = "Daily Promoted Video Views", type = "line", color = "red"
   ) %>% 
   hc_add_series(
-  make_xts(reach$daily_organic_reach, reach$date), 
-  name = "Daily Organic Reach", type = "line", color = "green"
+  make_xts(videos_views$daily_total_organic_views, videos_views$date), 
+  name = "Daily Organic Video Views", type = "line", color = "green"
   ) %>% 
-  hc_add_series(
-  make_xts(reach$daily_viral_reach, reach$date), 
-  name = "Daily Viral Reach", type = "line", color = "grey"
-  )    %>%
   hc_add_theme(hc_theme_smpl()) %>%
   hc_legend(enabled = T, align = "right", verticalAlign = "top",
             layout = "vertical", x = -50, y = 30, 
@@ -1421,66 +1522,7 @@ highchart(type = "stock")  %>%
 
 ```
 
-### Total - Page Views of Facebook Page
 
-```{r, eval = F}
-
-cumsum_reach <- reach %>% 
-  mutate_if(.predicate = is.numeric, .funs = if_else_replace) %>% 
-  mutate_if(.predicate = is.numeric, .funs = cumsum)
-
-
-highchart(type = "stock")  %>%
-  #hc_add_series(sent_total, color = "blue") %>% 
-  #hc_credits(enabled = TRUE) %>%
-  #hc_exporting(enabled = TRUE) 
-#  hc_add_series(
-#  make_xts(cumsum_reach$daily_total_reach, cumsum_reach$date), 
-#  name = "Total Reach", type = "line", color = "darkblue"
-#  ) %>% 
-  hc_add_series(
-  make_xts(cumsum_reach$daily_paid_reach, cumsum_reach$date), 
-  name = "Total Paid Reach", type = "area", color = "red"
-  ) %>% 
-  hc_add_series(
-  make_xts(cumsum_reach$daily_organic_reach, cumsum_reach$date), 
-  name = "Total Organic Reach", type = "area", color = "green"
-  ) %>% 
-  hc_add_series(
-  make_xts(cumsum_reach$daily_viral_reach, cumsum_reach$date), 
-  name = "Total Viral Reach", type = "area", color = "grey"
-  )    %>%
-  hc_add_theme(hc_theme_smpl()) %>%
-  hc_legend(enabled = T, align = "right", verticalAlign = "top",
-            layout = "vertical", x = -50, y = 30, 
-            floating = T, itemStyle = list(
-            color = 'black',
-            fontSize = "13px"
-   )) %>% 
-  hc_rangeSelector(enabled = T, buttons = list(
-    list(type = 'all', text = 'All'),
-    list(type = 'month', count = 3, text = '3M'),
-    list(type = 'month', count = 2, text = '2M'),
-    list(type = 'month', count = 1, text = '1M'),
-    list(type = 'week', count = 2, text = '2Wks'),
-    list(type = 'week', count = 1, text = '1Wk')
-  )) %>% 
-  hc_exporting(
-    enabled = TRUE
-  ) %>% 
-  hc_plotOptions(area = list(
-    stacking = "normal",
-    lineColor = "#666666",
-    lineWidth = 1,
-    marker = list(
-      lineWidth = 1,
-      lineColor = "666666"
-    )
-  ))
-
-
-
-```
 
 Column {data-width=280}
 -------------------------------------
@@ -1491,37 +1533,33 @@ Column {data-width=280}
 
 *Legend:*
 
-**(Daily) Total Reach**
+**(Daily) Total Video Views**
 
-The number of people who have seen any content associated with your Page. (Unique Users)
+Total number of times videos have been viewed for more than 3 seconds. (Total Count).
 
-**(Daily) Paid Reach**
+**(Daily) Promoted Video Views**
 
-The number of people who saw a sponsored story or ad pointing to your Page. (Unique Users)
+Number of times a promoted video has been viewed for more than 3 seconds (Total Count).
 
-**(Daily) Organic Reach**
+**(Daily) Organic Videos**
 
-The number of people who visited your Page, or saw your Page or one of its posts in news feed or ticker. These can be people who have liked your Page and people who haven't. (Unique Users)
+Number of times a video has been viewed due to organic reach (Total Count)
 
-**(Daily) Viral Reach**
+```{r}
+viewing <- cumsum_video %>% 
+   .[nrow(cumsum_video),2:4]
 
-The number of people who saw your Page or one of its posts from a story shared by a friend. These stories include liking your Page, posting to your Page's timeline, liking, commenting on or sharing one of your Page posts, answering a question you posted, responding to one of your events, mentioning your Page, tagging your Page in a photo or checking in at your location. (Unique Users)
+colnames(viewing) <- c("Total Video Views", "Total Promoted Video Views", "Total Organic Video Views")
 
-```{r, eval = F}
-reaching <- cumsum_reach %>% 
-   .[nrow(cumsum_reach),2:5]
-
-colnames(reaching) <- c("Total Reach", "Total Paid Reach", "Total Organic Reach", "Total Viral Reach")
-
-reaching %<>% 
+viewing %<>% 
 #  .[1,] %>% 
   gather() 
 
-colnames(reaching) <- c("Measure", "Total Number (October 9th 2017 - January 7th 2018)")
+colnames(viewing) <- c("Measure", "Total Number (October 9th 2017 - January 7th 2018)")
 
-knitr::kable(reaching)
+knitr::kable(viewing)
 
-plot_dat <- reaching[-1,] %>% 
+plot_dat <- viewing[-1,] %>% 
   mutate(perc = round(`Total Number (October 9th 2017 - January 7th 2018)`/sum(`Total Number (October 9th 2017 - January 7th 2018)`)*100,2))
 
 
@@ -1668,7 +1706,7 @@ cntry_likes %>%
   ) %>%
   highcharter::hc_colorAxis(stops = stops) %>%
   highcharter::hc_title(
-    text = paste0("Total Page Likes (",total, "\v on January 7th 2018)")
+    text = paste0("Total Page Likes (",total, " on January 7th 2018)")
   ) %>% 
   highcharter::hc_subtitle(text = "Based on Data from Omar Saif Ghobash's Facebook page.") %>%
 #  highcharter::hc_credits(enabled = TRUE, text = "Based on Data from Omar Saif Ghobash's Facebook page") %>% 
@@ -1766,7 +1804,7 @@ cntry_follows %>%
   ) %>%
   highcharter::hc_colorAxis(stops = stops) %>%
   highcharter::hc_title(
-    text = paste0("Total Page Follows (",total, "\v on January 7th 2018)")
+    text = paste0("Total Page Follows (",total, " on January 7th 2018)")
   ) %>% 
   highcharter::hc_subtitle(text = "Based on Data from Omar Saif Ghobash's Facebook page.") %>%
 #  highcharter::hc_credits(enabled = TRUE, text = "Based on Data from Omar Saif Ghobash's Facebook page") %>% 
@@ -1843,36 +1881,64 @@ data(worldgeojson, package = "highcharter")
 
 city_daily_reach <- readr::read_csv("data/city_daily_reach.csv") 
 
-city_daily_reach <- city_daily_reach %>% filter(!is.na(Date))# %>% 
- # select(-Date)
+city_daily_reach <- city_daily_reach %>% filter(!is.na(Date)) #%>% 
+  #select(-Date)
 
-cities <- colnames(city_daily_reach) %>% str_replace("Daily Reach by City - ", "")
+cities <- city_daily_reach %>% select(-Date) %>% 
+        colnames() %>% str_replace("Daily Reach by City - ", "")
 
-#library(ggmap) 
-#
-#gg_codes <- geocode(cities)
+#devtools::install_github("geonames","barryrowlingson")
+
+GNsearch_all <- function(x) {  
+  res <- geonames::GNsearch(q=x, username = "favstats")  
+  return(bind_rows(res[1,])) 
+}
+
+#gg_codes <- stringi::stri_enc_toutf8(cities) %>% 
+#  map(GNsearch_all) %>% bind_rows()
 #
 #cities %<>% 
 #  cbind(gg_codes) 
 #
+
+#cities <- gg_codes %>% 
+#  select(name, lng, lat) 
+
 #colnames(cities) <- c("city", "lon", "lat")
 #
-#save(cities, file ="cities.Rdata")
+#save(cities, file = "data/cities.Rdata")
 
-load("cities.Rdata")
+#save(gg_codes, file = "data/gg_codes.Rdata")
+load("data/gg_codes.Rdata")
+
+cities <- gg_codes %>% 
+  cbind(cities)
+
+
+load("data/cities.Rdata")
 
 city_daily_reach %<>% 
-  gather("city",  "reach", -Date) %>% 
+  gather("name",  "reach", -Date) %>% 
   select(-Date) %>% 
   mutate(reach = as.numeric(reach)) %>% 
-  group_by(city) %>% 
+  group_by(name) %>% 
   summarise(reach = sum(reach, na.rm = T)) %>% 
-  mutate(city = colnames(city_daily_reach %>%  select(-Date)) %>% str_replace("Daily Reach by City - ", "")) %>% 
-  left_join(cities, by = "city")  %>% 
+  mutate(name = cities$name) %>% 
+  left_join(cities, by = "name")  %>% 
   rename(z = reach) %>% 
-  rename(name = city)
+  mutate(name = case_when(
+    name == "Rye" ~ "New York",
+    TRUE ~ name
+  ))
 
-cntry_daily_reach %>% 
+city_daily_reach %>% 
+  mutate(iso3 = countrycode::countrycode(countryName, "country.name", "iso3c")) %>% 
+  select(iso3, z) %>% 
+  na.omit() %>% 
+  group_by(iso3) %>% 
+  summarise(z = sum(z, na.rm = T)) %>% 
+  left_join(cntry_daily_reach, by = "iso3") %>% 
+  mutate(reach = z + reach) %>% 
   select(iso3, reach) %>% 
   group_by(iso3) %>% 
   summarize(reach = sum(reach, na.rm = T)) %>% 
@@ -1886,13 +1952,20 @@ cntry_daily_reach %>%
   highcharter::hc_title(
     text = "Total Page Reach (October 9th 2017 - January 7th 2018)"
   ) %>% 
-  highcharter::hc_subtitle(text = "Based on Data from Omar Saif Ghobash's Facebook page. \t By user country in unique users (Total = 264.755)") %>%
+  highcharter::hc_subtitle(text = "Based on Data from Omar Saif Ghobash's Facebook page. By user country in unique users (N = 185.502)") %>%
 #  highcharter::hc_credits(enabled = TRUE, text = "Based on Data from Omar Saif Ghobash's Facebook page") %>% 
   highcharter::hc_add_theme(highcharter::hc_theme_smpl()) %>% 
   highcharter::hc_mapNavigation(enabled = TRUE)  %>% 
-  hc_add_series(data = na.omit(city_daily_reach), type = "mapbubble",
+  hc_add_series(data = na.omit(city_daily_reach %>% 
+                                 rename(lon = lng) %>% 
+                                 mutate(name = paste(name, "| ", 
+                                                     adminName1, "| ", 
+                                                     countryName)) %>% 
+                                 select(name, lon, lat, z)), type = "mapbubble",
                 minSize = 0, maxSize = 30,
                 name = "City") 
+
+
 
 ```
 
@@ -1961,52 +2034,3 @@ hcmap() %>%
 
 ```
 
-
-
-### Ausprob
-
-
-**Daily Page Stories**
-
-Daily: The number of stories created about your Page. (Total Count)
-
-
-**Daily Total Impressions**
-
-Daily: The number of impressions seen of any content associated with your Page. (Total Count)
-
-**Daily Total Reach**
-
-Daily: The number of people who have seen any content associated with your Page. (Unique Users)
-
-**Daily Total Consumers**
-
-Daily: The number of people who clicked on any of your content. Stories that are created without clicking on Page content (ex, liking the Page from timeline) are not included. (Unique Users)
-
-**Daily Total Consumptions**
-
-Daily: The number of clicks on any of your content. Stories generated without clicks on page content (e.g., liking the page in Timeline) are not included. (Total Count)
-
-**Daily Post Engagements**
-
-Daily: The number of times people have engaged with your posts through like, comments and shares and more.
-
-**Daily Page Engaged Users**
-
-Daily: The number of people who engaged with your Page. Engagement includes any click or story created. (Unique Users)
-
-**Daily New Likes**
-
-Daily: The number of new people who have liked your Page (Total Count)
-
-**Daily Unlikes**
-
-Daily: The number of Unlikes of your Page (Total Count)
-
-**Daily New Follows**
-
-Daily: The number of new people who have followed your Page (Total Count)
-
-**Daily Total Video Views**
-
-Daily: The number of stories created about your Page. (Total Count)

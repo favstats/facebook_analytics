@@ -7,7 +7,7 @@ output:
     highlight: github
 ---
 
-
+### Total Likes by Gender and Age {data-commentary-width=560}
 
 ```{r, echo = F}
 
@@ -442,3 +442,114 @@ ggplot(aes(x=age, y=likes, fill=gender)) +
 
 ```
 
+
+### Chart B {data-commentary-width=560}
+
+```{r}
+
+numextract <- function(string){ 
+  str_extract(string, "\\-*\\d+\\.*\\d*")
+} 
+
+total_frequency <- readr::read_csv("data/total_frequency.csv") %>% janitor::clean_names()
+
+describes  <- as.list(total_frequency[1,])
+
+total_frequency %<>% filter(!is.na(date)) %>% 
+  select(-date) %>% 
+  mutate_all(funs(as.numeric)) %>% 
+  cbind(total_frequency %>% filter(!is.na(date)) %>% select(date), .) 
+
+# total_frequency %>% 
+#   gather("distrib", "freq", -date) %>% 
+#   mutate(distrib = numextract(distrib)) %>% 
+#   mutate(distrib = case_when(
+#     distrib == "6" ~ "6-10",
+#     distrib == "11" ~ "11-20",
+#     distrib == "21" ~ "21+",
+#     TRUE ~ distrib
+#   )) #%>% 
+# #  group_by(distrib) %>% 
+# #  summarise(freq = sum(freq, na.rm = T))
+
+
+highchart() %>% 
+  hc_chart(type = "area") %>% 
+  hc_title(text = "Unique users reached by how many times they saw any page content") %>% 
+#  hc_subtitle(text = "Source: Wikipedia.org") %>% 
+  hc_xAxis(categories = total_frequency$date,
+           tickmarkPlacement = "on",
+           title = list(enabled = FALSE)) %>% 
+  hc_yAxis(title = list(text = "Percent")) %>% 
+  hc_tooltip(pointFormat = "<span style=\"color:{series.color}\">{series.name}</span>:
+             <b>{point.percentage:.1f}%</b> ({point.y:,.0f})<br/>",
+             shared = TRUE) %>% 
+  hc_plotOptions(area = list(
+     stacking = "percent",
+     lineColor = "black",
+     lineWidth = 0.1,
+     marker = list(
+       lineWidth = 0.1,
+       lineColor = "black"
+       ))
+     ) %>% 
+  hc_add_series(name = "1 View", data = total_frequency$daily_total_frequency_distribution_1) %>% 
+  hc_add_series(name = "2 Views", data = total_frequency$daily_total_frequency_distribution_2) %>%
+  hc_add_series(name = "3 Views", data = total_frequency$daily_total_frequency_distribution_3) %>% 
+  hc_add_series(name = "4 Views", data = total_frequency$daily_total_frequency_distribution_4) %>% 
+  hc_add_series(name = "5 Views", data = total_frequency$daily_total_frequency_distribution_5) %>%  
+  hc_add_series(name = "6-10 Views", data = total_frequency$daily_total_frequency_distribution_6_10) %>% 
+  hc_add_series(name = "11-20 Views", data = total_frequency$daily_total_frequency_distribution_11_20) %>% 
+  hc_add_series(name = "+21 Views", data = total_frequency$daily_total_frequency_distribution_21) %>% 
+  hc_add_theme(hc_theme_smpl())
+       
+
+```
+
+### Chart C {data-commentary-width=560}
+
+```{r}
+prc_chart <- total_frequency %>% 
+  mutate_if(.predicate = is.numeric, .funs = if_else_replace) %>% 
+  mutate_if(.predicate = is.numeric, .funs = cumsum) %>% 
+  .[nrow(total_frequency),]
+#  mutate(distrib = case_when(
+#    distrib == "6" ~ "6-10",
+#    distrib == "11" ~ "11-20",
+#    distrib == "21" ~ "21+",
+#    TRUE ~ distrib
+#  )) #%>% 
+#  group_by(distrib) %>% 
+#  summarise(freq = sum(freq, na.rm = T))
+
+highchart() %>%
+    hc_xAxis(categories = "%",
+             title = "Percentages") %>% 
+    hc_add_series(data = prc_chart$daily_total_frequency_distribution_1,
+                  name = "1 View") %>%   
+    hc_add_series(data = prc_chart$daily_total_frequency_distribution_2,
+                  name = "2 Views") %>%  
+    hc_add_series(data = prc_chart$aily_total_frequency_distribution_3,
+                  name = "3 Views") %>%    
+    hc_add_series(data = prc_chart$daily_total_frequency_distribution_4,
+                  name = "4 Views") %>% 
+    hc_add_series(data = prc_chart$daily_total_frequency_distribution_5,
+                  name = "5 Views") %>% 
+    hc_add_series(data = prc_chart$daily_total_frequency_distribution_6_10,
+                  name = "6-10 Views") %>% 
+    hc_add_series(data = prc_chart$daily_total_frequency_distribution_11_20,
+                  name = "11-20 Views") %>% 
+    hc_add_series(data = prc_chart$daily_total_frequency_distribution_21,
+                  name = "+21 Views") %>% 
+    hc_chart(type = "bar") %>%
+    hc_plotOptions(series = list(stacking = "percent")) %>%
+    hc_tooltip(pointFormat = "<span style=\"color:{series.color}\">{series.name}</span>:
+             <b>{point.percentage:.1f}%</b> ({point.y:,.0f})<br/>") %>% 
+    hc_yAxis(title = list(text = "Percentage")) %>%
+#    hc_legend(reversed = TRUE) %>% 
+    hc_add_theme(hc_theme_smpl()) %>% 
+    hc_size(300, 200)  %>%
+    hc_legend(enabled = T, align = "center", verticalAlign = "bottom",
+              layout = "horizontal"
+ )
+```

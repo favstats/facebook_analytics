@@ -13,7 +13,7 @@ pacman::p_load(tidyverse, magrittr, stringr, scales, lubridate, tidytext, tidyr,
 ```{r}
 devtools::install_github("pablobarbera/Rfacebook/Rfacebook") # from GitHub
 library(Rfacebook)
-my_key <- "EAACEdEose0cBAGOWs2BSo7wVoCUv4q0m7BZC4KHUy9guJiehYATjd8Qjb6NtrAZAAmp0AQMirT24QBUlg01aEeGY4e7H9i9Ku79g8yikENNLiiYHiOLtl9aUeyd2SZBNxZBGquWNqFYztdhNNdRDfc6OSXS7ISW8KUKmE28hPZAR6Suu1ZBFXk9esBaKSYOeApIXA0zjDuewZDZD"
+my_key <- "EAACEdEose0cBAOpStwFzGVwZAFWzcA6rcioypbHPaQkgoIYTZByOzwoCZCORWUUrC3QrGZA4saN81LBCyZB0vDUV4z1aUEEEkR4xHUzZBNZAEyMM7XqXVnxXdGuFTMTgLxHe7Dd8QYt817JhGoQPV0Lb50tvJcPFPwI4ZCu8d37zoaLPLDvrkJr8cROt7ZBkiLzYLGuKKFokxagZDZD"
 me <- getUsers("me", my_key, private_info=TRUE)
 me
 ```
@@ -21,7 +21,16 @@ me
 # Target Page https://www.facebook.com/OmarSGhobash/
 
 ```{r}
-page <- getPage("OmarSGhobash", my_key, n = 5000)
+
+postings <- getPage(
+  "OmarSGhobash", 
+  my_key, 
+  n = 10000, 
+  since='2017/10/06', 
+  until='2018/01/07'
+)
+
+save(postings, file = "data/postings.Rdata")
 
 
 
